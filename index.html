@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindDesk</title>
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    :root{
+      --bg-1:#07111f;
+      --bg-2:#0c1827;
+      --panel:rgba(17, 28, 45, 0.78);
+      --line:rgba(130, 180, 255, 0.16);
+      --text:#ebf4ff;
+      --sub:#94a8c8;
+      --accent:#63b0ff;
+      --accent-2:#7b6dff;
+      --danger:#ff6f87;
+      --warn:#ffcb66;
+      --ok:#44d5a8;
+      --shadow:0 18px 40px rgba(0,0,0,.35);
+    }
+
+    body{
+      font-family:"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(99,176,255,.14), transparent 22%),
+        radial-gradient(circle at top right, rgba(123,109,255,.14), transparent 24%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      overflow-y:auto;
+    }
+
+    .app{
+      max-width:1680px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .brand h1{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:.05em;
+    }
+
+    .brand p{
+      color:var(--sub);
+      font-size:13px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .glass{
+      background:var(--panel);
+      border:1px solid var(--line);
+      backdrop-filter:blur(10px);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .role-switch{
+      display:flex;
+      overflow:hidden;
+    }
+
+    .role-switch button{
+      border:none;
+      background:transparent;
+      color:var(--sub);
+      padding:12px 18px;
+      cursor:pointer;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .role-switch button.active{
+      color:#fff;
+      background:linear-gradient(135deg, rgba(99,176,255,.2), rgba(123,109,255,.2));
+    }
+
+    .select-box{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      color:var(--sub);
+      font-size:14px;
+    }
+
+    .select-box label{
+      white-space:nowrap;
+    }
+
+    select,input,textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:12px;
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:12px 14px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .stat{
+      padding:16px;
+    }
+
+    .stat .label{
+      font-size:12px;
+      color:var(--sub);
+      margin-bottom:8px;
+    }
+
+    .stat .value{
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .workspace-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:18px;
+      padding:14px;
+    }
+
+    .workspace-controls-title{
+      width:100%;
+      font-size:13px;
+      color:var(--sub);
+      font-weight:800;
+    }
+
+    .toggle-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .toggle-chip{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+      color:var(--text);
+    }
+
+    .toggle-chip input{
+      width:auto;
+      accent-color:#63b0ff;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr 1fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .window{
+      min-height:220px;
+      padding:16px;
+      user-select:none;
+    }
+
+    .window.main{
+      grid-column:span 2;
+      min-height:680px;
+    }
+
+    .window.dragging{
+      opacity:.55;
+      transform:scale(.99);
+      outline:1px dashed rgba(255,255,255,.25);
+    }
+
+    .window.drag-over{
+      outline:2px solid rgba(99,176,255,.55);
+    }
+
+    .window.hidden{
+      display:none !important;
+    }
+
+    .window-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:14px;
+      cursor:grab;
+    }
+
+    .window-header:active{
+      cursor:grabbing;
+    }
+
+    .window-title{
+      font-size:17px;
+      font-weight:900;
+    }
+
+    .window-sub{
+      font-size:12px;
+      color:var(--sub);
+      margin-top:4px;
+    }
+
+    .badge{
+      font-size:11px;
+      font-weight:800;
+      color:#d7e8ff;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.05);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .form-group{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .form-group label{
+      font-size:12px;
+      font-weight:800;
+      color:var(--sub);
+    }
+
+    .btn-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:12px 15px;
+      cursor:pointer;
+      font-weight:900;
+      color:#fff;
+      transition:.15s;
+    }
+
+    .btn:active{
+      transform:scale(.98);
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .btn-sub{
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+    }
+
+    .btn-danger{
+      background:linear-gradient(135deg, #ff6f87, #ff9859);
+    }
+
+    .task-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-height:590px;
+      overflow:auto;
+      padding-right:4px;
+      user-select:text;
+    }
+
+    .task-card{
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      padding:14px;
+    }
+
+    .task-title{
+      font-size:16px;
+      font-weight:900;
+      line-height:1.45;
+      margin-bottom:8px;
+    }
+
+    .task-desc{
+      font-size:13px;
+      color:var(--sub);
+      line-height:1.6;
+      white-space:pre-wrap;
+      margin-bottom:12px;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .chip{
+      font-size:12px;
+      font-weight:800;
+      border-radius:999px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.05);
+    }
+
+    .high{ background:rgba(255,111,135,.16); color:#ffd9e0; }
+    .medium{ background:rgba(255,203,102,.14); color:#ffedc4; }
+    .low{ background:rgba(68,213,168,.14); color:#cbffef; }
+
+    .todo{ background:rgba(99,176,255,.16); color:#dcecff; }
+    .progress{ background:rgba(123,109,255,.16); color:#e8e0ff; }
+    .done{ background:rgba(68,213,168,.16); color:#cbffef; }
+
+    .task-meta{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .meta{
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:12px;
+      padding:10px;
+    }
+
+    .meta-label{
+      color:var(--sub);
+      font-size:11px;
+      margin-bottom:4px;
+    }
+
+    .meta-value{
+      font-size:13px;
+      font-weight:800;
+      line-height:1.45;
+    }
+
+    .task-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+    }
+
+    .task-actions select{
+      width:auto;
+      min-width:140px;
+    }
+
+    .mini-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:260px;
+      overflow:auto;
+      user-select:text;
+    }
+
+    .mini-item{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .mini-item strong{
+      display:block;
+      font-size:13px;
+      line-height:1.45;
+      margin-bottom:6px;
+    }
+
+    .mini-item span{
+      color:var(--sub);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    .kpi{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      user-select:text;
+    }
+
+    .kpi-box{
+      padding:14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .kpi-box .small{
+      font-size:12px;
+      color:var(--sub);
+      margin-bottom:6px;
+    }
+
+    .kpi-box .big{
+      font-size:22px;
+      font-weight:900;
+    }
+
+    .note-box{
+      font-size:13px;
+      color:var(--sub);
+      line-height:1.7;
+      padding:14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      user-select:text;
+    }
+
+    .empty{
+      padding:22px;
+      text-align:center;
+      color:var(--sub);
+      border:1px dashed rgba(255,255,255,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.025);
+    }
+
+    @media (max-width:1280px){
+      .workspace{
+        grid-template-columns:1.4fr 1fr 1fr;
+      }
+
+      .window.main{
+        grid-column:span 2;
+      }
+    }
+
+    @media (max-width:980px){
+      .stats{
+        grid-template-columns:repeat(2, 1fr);
+      }
+
+      .workspace{
+        grid-template-columns:1fr;
+      }
+
+      .window.main{
+        grid-column:span 1;
+        min-height:auto;
+      }
+    }
+
+    @media (max-width:640px){
+      .stats{
+        grid-template-columns:1fr;
+      }
+
+      .form-grid,
+      .task-meta{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1>MindDesk</h1>
+        <p>Powered by Parallel Mind OS / Draggable Adaptive Workspace</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="glass role-switch">
+          <button id="managerModeBtn" class="active">管理者</button>
+          <button id="memberModeBtn">メンバー</button>
+        </div>
+
+        <div class="glass select-box">
+          <label for="currentUserSelect">表示ユーザー</label>
+          <select id="currentUserSelect"></select>
+        </div>
+
+        <div class="glass select-box">
+          <label for="statusFilter">状態</label>
+          <select id="statusFilter">
+            <option value="all">すべて</option>
+            <option value="Todo">Todo</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Done">Done</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="glass stat">
+        <div class="label">総タスク数</div>
+        <div class="value" id="statTotal">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">Todo</div>
+        <div class="value" id="statTodo">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">In Progress</div>
+        <div class="value" id="statProgress">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">Done</div>
+        <div class="value" id="statDone">0</div>
+      </div>
+    </div>
+
+    <section class="glass workspace-controls">
+      <div class="workspace-controls-title">WINDOW VISIBILITY</div>
+      <div class="toggle-list" id="windowToggleList"></div>
+    </section>
+
+    <div class="workspace" id="workspace">
+      <section class="glass window main" data-window-id="main" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title" id="mainTitle">チームタスク一覧</div>
+            <div class="window-sub" id="mainSub">管理者視点で全体進捗を確認</div>
+          </div>
+          <div class="badge">MAIN</div>
+        </div>
+        <div id="taskList" class="task-list"></div>
+      </section>
+
+      <section class="glass window" data-window-id="assign" draggable="true" id="assignWindow">
+        <div class="window-header">
+          <div>
+            <div class="window-title">タスク割り振り</div>
+            <div class="window-sub">上司 → 部下の中核導線</div>
+          </div>
+          <div class="badge">ASSIGN</div>
+        </div>
+
+        <div class="form-group">
+          <label for="taskTitle">タスク名</label>
+          <input type="text" id="taskTitle" placeholder="例：ダッシュボードUI調整">
+        </div>
+
+        <div class="form-group">
+          <label for="taskDescription">内容</label>
+          <textarea id="taskDescription" placeholder="作業内容、注意点、補足など"></textarea>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="taskAssignee">担当者</label>
+            <select id="taskAssignee"></select>
+          </div>
+          <div class="form-group">
+            <label for="taskDueDate">期限</label>
+            <input type="date" id="taskDueDate">
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="taskPriority">優先度</label>
+            <select id="taskPriority">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="taskStatus">初期状態</label>
+            <select id="taskStatus">
+              <option value="Todo" selected>Todo</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button id="assignTaskBtn" class="btn btn-primary">割り振る</button>
+          <button id="seedTaskBtn" class="btn btn-sub">サンプル</button>
+          <button id="clearAllBtn" class="btn btn-danger">全削除</button>
+        </div>
+      </section>
+
+      <section class="glass window" data-window-id="deadline" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title">締切接近</div>
+            <div class="window-sub">期限の近いタスク</div>
+          </div>
+          <div class="badge">DEADLINE</div>
+        </div>
+        <div id="deadlineList" class="mini-list"></div>
+      </section>
+
+      <section class="glass window" data-window-id="load" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title">メンバー負荷</div>
+            <div class="window-sub">担当件数の見える化</div>
+          </div>
+          <div class="badge">LOAD</div>
+        </div>
+        <div id="memberLoadList" class="mini-list"></div>
+      </section>
+
+      <section class="glass window" data-window-id="today" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title" id="todayWindowTitle">今日見るもの</div>
+            <div class="window-sub">現在ロールに合わせて切替</div>
+          </div>
+          <div class="badge">TODAY</div>
+        </div>
+        <div id="todayList" class="mini-list"></div>
+      </section>
+
+      <section class="glass window" data-window-id="focus" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title">Focus</div>
+            <div class="window-sub">MindDeskらしさの核</div>
+          </div>
+          <div class="badge">FOCUS</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-box">
+            <div class="small">今一番触るべき件数</div>
+            <div class="big" id="focusCount">0</div>
+          </div>
+          <div class="note-box" id="focusMessage">
+            優先度Highかつ締切が近いタスクがここに反映されます。
+          </div>
+        </div>
+      </section>
+
+      <section class="glass window" data-window-id="summary" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title">進捗サマリー</div>
+            <div class="window-sub">状態ごとの確認</div>
+          </div>
+          <div class="badge">SUMMARY</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-box">
+            <div class="small">完了率</div>
+            <div class="big" id="doneRate">0%</div>
+          </div>
+          <div class="kpi-box">
+            <div class="small">進行中率</div>
+            <div class="big" id="progressRate">0%</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass window" data-window-id="note" draggable="true">
+        <div class="window-header">
+          <div>
+            <div class="window-title">System Note</div>
+            <div class="window-sub">UI方針メモ</div>
+          </div>
+          <div class="badge">NOTE</div>
+        </div>
+        <div class="note-box" id="systemNote">
+          固定8窓ではなく、役割ごとに重要な窓を変える構成の方が実務に強いです。
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const members = ["田中", "佐藤", "山本", "中村"];
+
+    let currentMode = "manager";
+    let currentUser = members[0];
+    let statusFilter = "all";
+    let tasks = JSON.parse(localStorage.getItem("minddesk_tasks_drag")) || [];
+
+    const defaultWindowOrder = ["main", "assign", "deadline", "load", "today", "focus", "summary", "note"];
+    const defaultWindowVisibility = {
+      main: true,
+      assign: true,
+      deadline: true,
+      load: true,
+      today: true,
+      focus: true,
+      summary: true,
+      note: true
+    };
+
+    let windowOrder = JSON.parse(localStorage.getItem("minddesk_window_order")) || defaultWindowOrder;
+    let windowVisibility = JSON.parse(localStorage.getItem("minddesk_window_visibility")) || defaultWindowVisibility;
+    let draggedWindowId = null;
+
+    const managerModeBtn = document.getElementById("managerModeBtn");
+    const memberModeBtn = document.getElementById("memberModeBtn");
+    const currentUserSelect = document.getElementById("currentUserSelect");
+    const statusFilterSelect = document.getElementById("statusFilter");
+
+    const taskTitle = document.getElementById("taskTitle");
+    const taskDescription = document.getElementById("taskDescription");
+    const taskAssignee = document.getElementById("taskAssignee");
+    const taskDueDate = document.getElementById("taskDueDate");
+    const taskPriority = document.getElementById("taskPriority");
+    const taskStatus = document.getElementById("taskStatus");
+
+    const assignTaskBtn = document.getElementById("assignTaskBtn");
+    const seedTaskBtn = document.getElementById("seedTaskBtn");
+    const clearAllBtn = document.getElementById("clearAllBtn");
+
+    const workspace = document.getElementById("workspace");
+    const windowToggleList = document.getElementById("windowToggleList");
+
+    const taskList = document.getElementById("taskList");
+    const deadlineList = document.getElementById("deadlineList");
+    const memberLoadList = document.getElementById("memberLoadList");
+    const todayList = document.getElementById("todayList");
+
+    const statTotal = document.getElementById("statTotal");
+    const statTodo = document.getElementById("statTodo");
+    const statProgress = document.getElementById("statProgress");
+    const statDone = document.getElementById("statDone");
+
+    const mainTitle = document.getElementById("mainTitle");
+    const mainSub = document.getElementById("mainSub");
+    const assignWindow = document.getElementById("assignWindow");
+    const todayWindowTitle = document.getElementById("todayWindowTitle");
+    const focusCount = document.getElementById("focusCount");
+    const focusMessage = document.getElementById("focusMessage");
+    const doneRate = document.getElementById("doneRate");
+    const progressRate = document.getElementById("progressRate");
+    const systemNote = document.getElementById("systemNote");
+
+    const windowLabels = {
+      main: "Main",
+      assign: "Assign",
+      deadline: "Deadline",
+      load: "Load",
+      today: "Today",
+      focus: "Focus",
+      summary: "Summary",
+      note: "Note"
+    };
+
+    function saveTasks() {
+      localStorage.setItem("minddesk_tasks_drag", JSON.stringify(tasks));
+    }
+
+    function saveWorkspaceState() {
+      localStorage.setItem("minddesk_window_order", JSON.stringify(windowOrder));
+      localStorage.setItem("minddesk_window_visibility", JSON.stringify(windowVisibility));
+    }
+
+    function fillMemberSelects() {
+      currentUserSelect.innerHTML = "";
+      taskAssignee.innerHTML = "";
+
+      members.forEach(member => {
+        const option1 = document.createElement("option");
+        option1.value = member;
+        option1.textContent = member;
+        currentUserSelect.appendChild(option1);
+
+        const option2 = document.createElement("option");
+        option2.value = member;
+        option2.textContent = member;
+        taskAssignee.appendChild(option2);
+      });
+
+      currentUserSelect.value = currentUser;
+      taskAssignee.value = currentUser;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function normalizeWorkspaceState() {
+      const idsInDom = [...document.querySelectorAll(".window")].map(w => w.dataset.windowId);
+
+      windowOrder = defaultWindowOrder.filter(id => idsInDom.includes(id));
+      idsInDom.forEach(id => {
+        if (!windowOrder.includes(id)) {
+          windowOrder.push(id);
+        }
+      });
+
+      const mergedVisibility = { ...defaultWindowVisibility };
+      idsInDom.forEach(id => {
+        if (typeof windowVisibility[id] === "boolean") {
+          mergedVisibility[id] = windowVisibility[id];
+        }
+      });
+      windowVisibility = mergedVisibility;
+    }
+
+    function renderWindowOrder() {
+      windowOrder.forEach(id => {
+        const target = workspace.querySelector(`[data-window-id="${id}"]`);
+        if (target) workspace.appendChild(target);
+      });
+    }
+
+    function renderWindowVisibility() {
+      document.querySelectorAll(".window").forEach(windowEl => {
+        const id = windowEl.dataset.windowId;
+        windowEl.classList.toggle("hidden", !windowVisibility[id]);
+      });
+
+      if (currentMode === "member") {
+        assignWindow.classList.add("hidden");
+      }
+    }
+
+    function renderWindowToggles() {
+      windowToggleList.innerHTML = "";
+
+      windowOrder.forEach(id => {
+        const chip = document.createElement("label");
+        chip.className = "toggle-chip";
+
+        const checked = windowVisibility[id] ? "checked" : "";
+        const disabled = id === "main" ? "disabled" : "";
+
+        chip.innerHTML = `
+          <input type="checkbox" data-toggle-id="${id}" ${checked} ${disabled}>
+          <span>${windowLabels[id]}</span>
+        `;
+
+        windowToggleList.appendChild(chip);
+      });
+
+      windowToggleList.querySelectorAll("input[type='checkbox']").forEach(input => {
+        input.addEventListener("change", e => {
+          const id = e.target.dataset.toggleId;
+          if (id === "main") {
+            windowVisibility[id] = true;
+          } else {
+            windowVisibility[id] = e.target.checked;
+          }
+          saveWorkspaceState();
+          renderWindowVisibility();
+        });
+      });
+    }
+
+    function attachDragEvents() {
+      document.querySelectorAll(".window").forEach(win => {
+        win.addEventListener("dragstart", () => {
+          draggedWindowId = win.dataset.windowId;
+          win.classList.add("dragging");
+        });
+
+        win.addEventListener("dragend", () => {
+          win.classList.remove("dragging");
+          document.querySelectorAll(".window").forEach(w => w.classList.remove("drag-over"));
+          draggedWindowId = null;
+        });
+
+        win.addEventListener("dragover", e => {
+          e.preventDefault();
+          if (draggedWindowId && draggedWindowId !== win.dataset.windowId) {
+            win.classList.add("drag-over");
+          }
+        });
+
+        win.addEventListener("dragleave", () => {
+          win.classList.remove("drag-over");
+        });
+
+        win.addEventListener("drop", e => {
+          e.preventDefault();
+          win.classList.remove("drag-over");
+
+          const targetId = win.dataset.windowId;
+          if (!draggedWindowId || draggedWindowId === targetId) return;
+
+          const fromIndex = windowOrder.indexOf(draggedWindowId);
+          const toIndex = windowOrder.indexOf(targetId);
+
+          if (fromIndex === -1 || toIndex === -1) return;
+
+          const newOrder = [...windowOrder];
+          const [moved] = newOrder.splice(fromIndex, 1);
+          newOrder.splice(toIndex, 0, moved);
+
+          windowOrder = newOrder;
+          saveWorkspaceState();
+          renderWindowOrder();
+          renderWindowToggles();
+          attachDragEvents();
+          renderWindowVisibility();
+        });
+      });
+    }
+
+    function getVisibleTasks() {
+      let filtered = [...tasks];
+
+      if (currentMode === "member") {
+        filtered = filtered.filter(task => task.assignee === currentUser);
+      }
+
+      if (statusFilter !== "all") {
+        filtered = filtered.filter(task => task.status === statusFilter);
+      }
+
+      return filtered.sort((a, b) => {
+        const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+        const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+        return da - db;
+      });
+    }
+
+    function getTargetTasksForStats() {
+      return currentMode === "manager"
+        ? tasks
+        : tasks.filter(task => task.assignee === currentUser);
+    }
+
+    function getPriorityClass(priority) {
+      if (priority === "High") return "high";
+      if (priority === "Medium") return "medium";
+      return "low";
+    }
+
+    function getStatusClass(status) {
+      if (status === "Todo") return "todo";
+      if (status === "In Progress") return "progress";
+      return "done";
+    }
+
+    function addTask() {
+      const title = taskTitle.value.trim();
+      const description = taskDescription.value.trim();
+      const assignee = taskAssignee.value;
+      const dueDate = taskDueDate.value;
+      const priority = taskPriority.value;
+      const status = taskStatus.value;
+
+      if (!title) {
+        alert("タスク名を入力して");
+        return;
+      }
+
+      const task = {
+        id: crypto.randomUUID(),
+        title,
+        description,
+        assignee,
+        dueDate,
+        priority,
+        status,
+        createdAt: new Date().toLocaleDateString("ja-JP")
+      };
+
+      tasks.push(task);
+      saveTasks();
+      clearForm();
+      renderAll();
+    }
+
+    function clearForm() {
+      taskTitle.value = "";
+      taskDescription.value = "";
+      taskDueDate.value = "";
+      taskPriority.value = "Medium";
+      taskStatus.value = "Todo";
+      taskAssignee.value = currentUser;
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(task => task.id !== id);
+      saveTasks();
+      renderAll();
+    }
+
+    function changeTaskStatus(id, value) {
+      const target = tasks.find(task => task.id === id);
+      if (!target) return;
+      target.status = value;
+      saveTasks();
+      renderAll();
+    }
+
+    function quickSetStatus(id, value) {
+      const target = tasks.find(task => task.id === id);
+      if (!target) return;
+      target.status = value;
+      saveTasks();
+      renderAll();
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      managerModeBtn.classList.toggle("active", mode === "manager");
+      memberModeBtn.classList.toggle("active", mode === "member");
+      renderAll();
+    }
+
+    function renderStats() {
+      const target = getTargetTasksForStats();
+
+      const total = target.length;
+      const todo = target.filter(task => task.status === "Todo").length;
+      const progress = target.filter(task => task.status === "In Progress").length;
+      const done = target.filter(task => task.status === "Done").length;
+
+      statTotal.textContent = total;
+      statTodo.textContent = todo;
+      statProgress.textContent = progress;
+      statDone.textContent = done;
+
+      doneRate.textContent = total ? Math.round((done / total) * 100) + "%" : "0%";
+      progressRate.textContent = total ? Math.round((progress / total) * 100) + "%" : "0%";
+    }
+
+    function renderTaskList() {
+      const visible = getVisibleTasks();
+
+      mainTitle.textContent = currentMode === "manager"
+        ? "チームタスク一覧"
+        : `${currentUser} のタスク`;
+
+      mainSub.textContent = currentMode === "manager"
+        ? "管理者視点で全体進捗を確認"
+        : "自分に割り振られたタスクを処理";
+
+      taskList.innerHTML = "";
+
+      if (visible.length === 0) {
+        taskList.innerHTML = `<div class="empty">表示できるタスクがまだありません</div>`;
+        return;
+      }
+
+      visible.forEach(task => {
+        const card = document.createElement("div");
+        card.className = "task-card";
+
+        const actionBlock = currentMode === "manager"
+          ? `
+            <div class="task-actions">
+              <select onchange="changeTaskStatus('${task.id}', this.value)">
+                <option value="Todo" ${task.status === "Todo" ? "selected" : ""}>Todo</option>
+                <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                <option value="Done" ${task.status === "Done" ? "selected" : ""}>Done</option>
+              </select>
+              <button class="btn btn-danger" onclick="deleteTask('${task.id}')">削除</button>
+            </div>
+          `
+          : `
+            <div class="task-actions">
+              <button class="btn btn-sub" onclick="quickSetStatus('${task.id}','Todo')">Todo</button>
+              <button class="btn btn-sub" onclick="quickSetStatus('${task.id}','In Progress')">進行中</button>
+              <button class="btn btn-primary" onclick="quickSetStatus('${task.id}','Done')">完了</button>
+            </div>
+          `;
+
+        card.innerHTML = `
+          <div class="task-title">${escapeHtml(task.title)}</div>
+          <div class="task-desc">${escapeHtml(task.description || "説明なし")}</div>
+
+          <div class="chips">
+            <span class="chip ${getPriorityClass(task.priority)}">${task.priority}</span>
+            <span class="chip ${getStatusClass(task.status)}">${task.status}</span>
+          </div>
+
+          <div class="task-meta">
+            <div class="meta">
+              <div class="meta-label">担当者</div>
+              <div class="meta-value">${escapeHtml(task.assignee)}</div>
+            </div>
+            <div class="meta">
+              <div class="meta-label">期限</div>
+              <div class="meta-value">${task.dueDate || "-"}</div>
+            </div>
+            <div class="meta">
+              <div class="meta-label">作成日</div>
+              <div class="meta-value">${task.createdAt}</div>
+            </div>
+          </div>
+
+          ${actionBlock}
+        `;
+
+        taskList.appendChild(card);
+      });
+    }
+
+    function renderDeadlineList() {
+      const base = currentMode === "manager"
+        ? [...tasks]
+        : tasks.filter(task => task.assignee === currentUser);
+
+      const near = base
+        .filter(task => task.dueDate && task.status !== "Done")
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+        .slice(0, 5);
+
+      deadlineList.innerHTML = "";
+
+      if (near.length === 0) {
+        deadlineList.innerHTML = `<div class="empty">期限の近い未完了タスクなし</div>`;
+        return;
+      }
+
+      near.forEach(task => {
+        const item = document.createElement("div");
+        item.className = "mini-item";
+        item.innerHTML = `
+          <strong>${escapeHtml(task.title)}</strong>
+          <span>${escapeHtml(task.assignee)} / ${task.dueDate} / ${task.priority}</span>
+        `;
+        deadlineList.appendChild(item);
+      });
+    }
+
+    function renderMemberLoad() {
+      memberLoadList.innerHTML = "";
+
+      if (currentMode === "member") {
+        const myTasks = tasks.filter(task => task.assignee === currentUser);
+        const todo = myTasks.filter(task => task.status === "Todo").length;
+        const progress = myTasks.filter(task => task.status === "In Progress").length;
+
+        memberLoadList.innerHTML = `
+          <div class="mini-item">
+            <strong>${currentUser}</strong>
+            <span>Todo: ${todo} / In Progress: ${progress} / All: ${myTasks.length}</span>
+          </div>
+        `;
+        return;
+      }
+
+      members.forEach(member => {
+        const memberTasks = tasks.filter(task => task.assignee === member);
+        const todo = memberTasks.filter(task => task.status === "Todo").length;
+        const progress = memberTasks.filter(task => task.status === "In Progress").length;
+        const done = memberTasks.filter(task => task.status === "Done").length;
+
+        const item = document.createElement("div");
+        item.className = "mini-item";
+        item.innerHTML = `
+          <strong>${member}</strong>
+          <span>All: ${memberTasks.length} / Todo: ${todo} / Progress: ${progress} / Done: ${done}</span>
+        `;
+        memberLoadList.appendChild(item);
+      });
+    }
+
+    function renderTodayList() {
+      const target = currentMode === "manager"
+        ? tasks
+            .filter(task => task.status !== "Done")
+            .sort((a, b) => {
+              const pa = taskPriorityRank(a.priority);
+              const pb = taskPriorityRank(b.priority);
+              return pa - pb;
+            })
+            .slice(0, 5)
+        : tasks
+            .filter(task => task.assignee === currentUser && task.status !== "Done")
+            .sort((a, b) => {
+              const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+              const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+              return da - db;
+            })
+            .slice(0, 5);
+
+      todayWindowTitle.textContent = currentMode === "manager"
+        ? "今日見るべきタスク"
+        : "今日やること";
+
+      todayList.innerHTML = "";
+
+      if (target.length === 0) {
+        todayList.innerHTML = `<div class="empty">表示項目なし</div>`;
+        return;
+      }
+
+      target.forEach(task => {
+        const item = document.createElement("div");
+        item.className = "mini-item";
+        item.innerHTML = `
+          <strong>${escapeHtml(task.title)}</strong>
+          <span>${currentMode === "manager" ? escapeHtml(task.assignee) + " / " : ""}${task.dueDate || "期限未設定"} / ${task.status}</span>
+        `;
+        todayList.appendChild(item);
+      });
+    }
+
+    function taskPriorityRank(priority) {
+      if (priority === "High") return 0;
+      if (priority === "Medium") return 1;
+      return 2;
+    }
+
+    function renderFocus() {
+      const target = currentMode === "manager"
+        ? tasks
+        : tasks.filter(task => task.assignee === currentUser);
+
+      const focusTasks = target
+        .filter(task => task.priority === "High" && task.status !== "Done")
+        .sort((a, b) => {
+          const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+          const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+          return da - db;
+        });
+
+      focusCount.textContent = focusTasks.length;
+
+      if (focusTasks.length === 0) {
+        focusMessage.textContent = "今はHigh優先の未完了タスクはありません。";
+      } else {
+        const first = focusTasks[0];
+        focusMessage.textContent = currentMode === "manager"
+          ? `今一番先に確認するなら「${first.title}」。担当者は ${first.assignee}。`
+          : `今一番先に触るなら「${first.title}」。まずこれを前進させるのが優先。`;
+      }
+    }
+
+    function renderSystemNote() {
+      systemNote.textContent = currentMode === "manager"
+        ? "管理者画面では全体把握が最優先。窓を絞るなら Main / Assign / Deadline / Load を残すのが強い。"
+        : "メンバー画面では自分が今やることが最優先。Main / Today / Focus / Summary を残すのが強い。";
+    }
+
+    function renderAll() {
+      renderStats();
+      renderTaskList();
+      renderDeadlineList();
+      renderMemberLoad();
+      renderTodayList();
+      renderFocus();
+      renderSystemNote();
+      renderWindowOrder();
+      renderWindowVisibility();
+      renderWindowToggles();
+      attachDragEvents();
+    }
+
+    function seedSampleTasks() {
+      const today = new Date();
+      const formatDate = (days) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + days);
+        return d.toISOString().slice(0, 10);
+      };
+
+      const sample = [
+        {
+          id: crypto.randomUUID(),
+          title: "ログイン画面UIの調整",
+          description: "入力欄・ボタン・余白を整えて統一感を出す",
+          assignee: "田中",
+          dueDate: formatDate(1),
+          priority: "High",
+          status: "Todo",
+          createdAt: new Date().toLocaleDateString("ja-JP")
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "メインダッシュボードのカード整理",
+          description: "情報量を保ったまま見やすくする",
+          assignee: "佐藤",
+          dueDate: formatDate(2),
+          priority: "Medium",
+          status: "In Progress",
+          createdAt: new Date().toLocaleDateString("ja-JP")
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "ローカル保存処理の検証",
+          description: "追加・更新・削除後も再読み込みで保持されるか確認",
+          assignee: "山本",
+          dueDate: formatDate(3),
+          priority: "Low",
+          status: "Done",
+          createdAt: new Date().toLocaleDateString("ja-JP")
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "通知窓の仮UI作成",
+          description: "締切接近や進捗更新を表示する箱を作る",
+          assignee: "中村",
+          dueDate: formatDate(1),
+          priority: "High",
+          status: "Todo",
+          createdAt: new Date().toLocaleDateString("ja-JP")
+        }
+      ];
+
+      tasks = [...tasks, ...sample];
+      saveTasks();
+      renderAll();
+    }
+
+    assignTaskBtn.addEventListener("click", addTask);
+    seedTaskBtn.addEventListener("click", seedSampleTasks);
+
+    clearAllBtn.addEventListener("click", () => {
+      if (!confirm("全タスクを削除する？")) return;
+      tasks = [];
+      saveTasks();
+      renderAll();
+    });
+
+    managerModeBtn.addEventListener("click", () => setMode("manager"));
+    memberModeBtn.addEventListener("click", () => setMode("member"));
+
+    currentUserSelect.addEventListener("change", (e) => {
+      currentUser = e.target.value;
+      renderAll();
+    });
+
+    statusFilterSelect.addEventListener("change", (e) => {
+      statusFilter = e.target.value;
+      renderAll();
+    });
+
+    fillMemberSelects();
+    normalizeWorkspaceState();
+    renderAll();
+
+    window.deleteTask = deleteTask;
+    window.changeTaskStatus = changeTaskStatus;
+    window.quickSetStatus = quickSetStatus;
+  </script>
+</body>
+</html>
