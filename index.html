@@ -12,14 +12,15 @@
     }
 
     :root{
-      --bg-1:#07111f;
-      --bg-2:#0c1827;
-      --panel:rgba(17, 28, 45, 0.78);
-      --line:rgba(130, 180, 255, 0.16);
+      --bg1:#07111f;
+      --bg2:#0d1827;
+      --panel:rgba(17,28,45,.82);
+      --panel2:rgba(22,35,56,.92);
+      --line:rgba(130,180,255,.14);
       --text:#ebf4ff;
-      --sub:#94a8c8;
+      --sub:#93a8c9;
       --accent:#63b0ff;
-      --accent-2:#7b6dff;
+      --accent2:#7b6dff;
       --danger:#ff6f87;
       --warn:#ffcb66;
       --ok:#44d5a8;
@@ -31,37 +32,40 @@
       min-height:100vh;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(99,176,255,.14), transparent 22%),
-        radial-gradient(circle at top right, rgba(123,109,255,.14), transparent 24%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+        radial-gradient(circle at top left, rgba(99,176,255,.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(123,109,255,.14), transparent 26%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
       overflow-y:auto;
     }
 
     .app{
-      max-width:1680px;
+      max-width:1550px;
       margin:0 auto;
       padding:24px;
     }
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:18px;
-      flex-wrap:wrap;
+    .glass{
+      background:var(--panel);
+      border:1px solid var(--line);
+      backdrop-filter:blur(10px);
+      border-radius:20px;
+      box-shadow:var(--shadow);
     }
 
-    .brand{
+    .topbar{
       display:flex;
-      flex-direction:column;
-      gap:6px;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
     }
 
     .brand h1{
       font-size:30px;
       font-weight:900;
-      letter-spacing:.05em;
+      letter-spacing:.04em;
+      margin-bottom:6px;
     }
 
     .brand p{
@@ -76,14 +80,6 @@
       align-items:center;
     }
 
-    .glass{
-      background:var(--panel);
-      border:1px solid var(--line);
-      backdrop-filter:blur(10px);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-    }
-
     .role-switch{
       display:flex;
       overflow:hidden;
@@ -94,8 +90,8 @@
       background:transparent;
       color:var(--sub);
       padding:12px 18px;
-      cursor:pointer;
       font-weight:800;
+      cursor:pointer;
       transition:.2s;
     }
 
@@ -129,13 +125,47 @@
     }
 
     textarea{
-      min-height:120px;
+      min-height:90px;
       resize:vertical;
+    }
+
+    .section{
+      margin-bottom:18px;
+    }
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .section-head h2{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .section-head p{
+      color:var(--sub);
+      font-size:13px;
+    }
+
+    .badge{
+      padding:6px 10px;
+      font-size:11px;
+      font-weight:800;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#dcecff;
+      white-space:nowrap;
     }
 
     .stats{
       display:grid;
-      grid-template-columns:repeat(4, 1fr);
+      grid-template-columns:repeat(4,1fr);
       gap:12px;
       margin-bottom:18px;
     }
@@ -145,8 +175,8 @@
     }
 
     .stat .label{
-      font-size:12px;
       color:var(--sub);
+      font-size:12px;
       margin-bottom:8px;
     }
 
@@ -155,109 +185,135 @@
       font-weight:900;
     }
 
-    .workspace-controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin-bottom:18px;
-      padding:14px;
+    .dashboard{
+      padding:18px;
     }
 
-    .workspace-controls-title{
-      width:100%;
-      font-size:13px;
-      color:var(--sub);
-      font-weight:800;
-    }
-
-    .toggle-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .toggle-chip{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      font-size:13px;
-      color:var(--text);
-    }
-
-    .toggle-chip input{
-      width:auto;
-      accent-color:#63b0ff;
-    }
-
-    .workspace{
+    .dashboard-grid{
       display:grid;
-      grid-template-columns:2fr 1fr 1fr 1fr;
+      grid-template-columns:1.3fr 1fr 1fr 1fr;
       gap:14px;
       align-items:start;
     }
 
-    .window{
-      min-height:220px;
+    .card{
       padding:16px;
-      user-select:none;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;
+      min-height:220px;
     }
 
-    .window.main{
-      grid-column:span 2;
-      min-height:680px;
+    .card h3{
+      font-size:15px;
+      font-weight:900;
+      margin-bottom:6px;
     }
 
-    .window.dragging{
-      opacity:.55;
-      transform:scale(.99);
-      outline:1px dashed rgba(255,255,255,.25);
+    .card-sub{
+      color:var(--sub);
+      font-size:12px;
+      margin-bottom:12px;
     }
 
-    .window.drag-over{
-      outline:2px solid rgba(99,176,255,.55);
+    .danger-top{
+      border:1px solid rgba(255,111,135,.18);
+      background:rgba(255,111,135,.06);
     }
 
-    .window.hidden{
-      display:none !important;
+    .warn-top{
+      border:1px solid rgba(255,203,102,.18);
+      background:rgba(255,203,102,.05);
     }
 
-    .window-header{
+    .ok-top{
+      border:1px solid rgba(68,213,168,.18);
+      background:rgba(68,213,168,.05);
+    }
+
+    .mini-list{
       display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
+      flex-direction:column;
       gap:10px;
-      margin-bottom:14px;
-      cursor:grab;
+      max-height:320px;
+      overflow:auto;
     }
 
-    .window-header:active{
-      cursor:grabbing;
+    .mini-item{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
     }
 
-    .window-title{
+    .mini-item strong{
+      display:block;
+      font-size:13px;
+      line-height:1.5;
+      margin-bottom:6px;
+    }
+
+    .mini-item span{
+      display:block;
+      color:var(--sub);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .hero-alert{
+      padding:14px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(255,111,135,.15), rgba(255,203,102,.08));
+      border:1px solid rgba(255,111,135,.18);
+      margin-bottom:12px;
+    }
+
+    .hero-alert .hero-title{
       font-size:17px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .hero-alert .hero-sub{
+      color:#ffe0e6;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .kpi-line{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .kpi-box{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .kpi-box .small{
+      color:var(--sub);
+      font-size:11px;
+      margin-bottom:4px;
+    }
+
+    .kpi-box .big{
+      font-size:20px;
       font-weight:900;
     }
 
-    .window-sub{
-      font-size:12px;
-      color:var(--sub);
-      margin-top:4px;
+    .main-layout{
+      display:grid;
+      grid-template-columns:380px 1fr;
+      gap:16px;
+      align-items:start;
     }
 
-    .badge{
-      font-size:11px;
-      font-weight:800;
-      color:#d7e8ff;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.05);
-      padding:6px 10px;
-      border-radius:999px;
-      white-space:nowrap;
+    .panel{
+      padding:18px;
     }
 
     .form-grid{
@@ -281,16 +337,16 @@
 
     .btn-row{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
+      gap:10px;
     }
 
     .btn{
       border:none;
       border-radius:12px;
       padding:12px 15px;
-      cursor:pointer;
       font-weight:900;
+      cursor:pointer;
       color:#fff;
       transition:.15s;
     }
@@ -300,7 +356,7 @@
     }
 
     .btn-primary{
-      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
     }
 
     .btn-sub{
@@ -309,39 +365,49 @@
     }
 
     .btn-danger{
-      background:linear-gradient(135deg, #ff6f87, #ff9859);
+      background:linear-gradient(135deg,#ff6f87,#ff9859);
+    }
+
+    .btn-warn{
+      background:linear-gradient(135deg,#ffb84d,#ff8c61);
     }
 
     .task-list{
       display:flex;
       flex-direction:column;
       gap:12px;
-      max-height:590px;
+      max-height:780px;
       overflow:auto;
       padding-right:4px;
-      user-select:text;
     }
 
     .task-card{
-      border-radius:16px;
+      border-radius:18px;
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.06);
-      padding:14px;
+      padding:16px;
+    }
+
+    .task-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      margin-bottom:10px;
     }
 
     .task-title{
       font-size:16px;
       font-weight:900;
-      line-height:1.45;
-      margin-bottom:8px;
+      line-height:1.5;
     }
 
     .task-desc{
-      font-size:13px;
       color:var(--sub);
-      line-height:1.6;
-      white-space:pre-wrap;
+      font-size:13px;
+      line-height:1.65;
       margin-bottom:12px;
+      white-space:pre-wrap;
     }
 
     .chips{
@@ -352,10 +418,10 @@
     }
 
     .chip{
+      padding:6px 10px;
+      border-radius:999px;
       font-size:12px;
       font-weight:800;
-      border-radius:999px;
-      padding:6px 10px;
       border:1px solid rgba(255,255,255,.06);
       background:rgba(255,255,255,.05);
     }
@@ -367,19 +433,20 @@
     .todo{ background:rgba(99,176,255,.16); color:#dcecff; }
     .progress{ background:rgba(123,109,255,.16); color:#e8e0ff; }
     .done{ background:rgba(68,213,168,.16); color:#cbffef; }
+    .blocked{ background:rgba(255,138,92,.16); color:#ffe1d4; }
 
     .task-meta{
       display:grid;
-      grid-template-columns:repeat(3, 1fr);
+      grid-template-columns:repeat(4,1fr);
       gap:10px;
       margin-bottom:12px;
     }
 
     .meta{
+      padding:10px;
+      border-radius:12px;
       background:rgba(255,255,255,.035);
       border:1px solid rgba(255,255,255,.05);
-      border-radius:12px;
-      padding:10px;
     }
 
     .meta-label{
@@ -399,7 +466,6 @@
       flex-wrap:wrap;
       gap:8px;
       align-items:center;
-      user-select:none;
     }
 
     .task-actions select{
@@ -407,69 +473,30 @@
       min-width:140px;
     }
 
-    .mini-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      max-height:260px;
-      overflow:auto;
-      user-select:text;
-    }
-
-    .mini-item{
+    .block-box{
+      margin-top:12px;
       padding:12px;
       border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.06);
+      border:1px solid rgba(255,184,77,.18);
+      background:rgba(255,184,77,.06);
     }
 
-    .mini-item strong{
-      display:block;
-      font-size:13px;
-      line-height:1.45;
-      margin-bottom:6px;
-    }
-
-    .mini-item span{
-      color:var(--sub);
+    .block-title{
       font-size:12px;
-      line-height:1.45;
-    }
-
-    .kpi{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      user-select:text;
-    }
-
-    .kpi-box{
-      padding:14px;
-      border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.06);
-    }
-
-    .kpi-box .small{
-      font-size:12px;
-      color:var(--sub);
-      margin-bottom:6px;
-    }
-
-    .kpi-box .big{
-      font-size:22px;
       font-weight:900;
+      margin-bottom:6px;
+      color:#ffdba6;
     }
 
-    .note-box{
-      font-size:13px;
-      color:var(--sub);
-      line-height:1.7;
-      padding:14px;
-      border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.06);
-      user-select:text;
+    .block-text{
+      color:#ffe8c5;
+      font-size:12px;
+      line-height:1.55;
+      white-space:pre-wrap;
+    }
+
+    .hidden{
+      display:none !important;
     }
 
     .empty{
@@ -482,37 +509,33 @@
     }
 
     @media (max-width:1280px){
-      .workspace{
-        grid-template-columns:1.4fr 1fr 1fr;
+      .dashboard-grid{
+        grid-template-columns:1fr 1fr;
       }
 
-      .window.main{
-        grid-column:span 2;
-      }
-    }
-
-    @media (max-width:980px){
-      .stats{
-        grid-template-columns:repeat(2, 1fr);
-      }
-
-      .workspace{
+      .main-layout{
         grid-template-columns:1fr;
       }
-
-      .window.main{
-        grid-column:span 1;
-        min-height:auto;
-      }
     }
 
-    @media (max-width:640px){
+    @media (max-width:860px){
       .stats{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .dashboard-grid{
         grid-template-columns:1fr;
       }
 
       .form-grid,
-      .task-meta{
+      .task-meta,
+      .kpi-line{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:560px){
+      .stats{
         grid-template-columns:1fr;
       }
     }
@@ -523,7 +546,7 @@
     <div class="topbar">
       <div class="brand">
         <h1>MindDesk</h1>
-        <p>Powered by Parallel Mind OS / Draggable Adaptive Workspace</p>
+        <p>Powered by Parallel Mind OS / Judgment Dashboard Prototype</p>
       </div>
 
       <div class="toolbar">
@@ -544,6 +567,7 @@
             <option value="Todo">Todo</option>
             <option value="In Progress">In Progress</option>
             <option value="Done">Done</option>
+            <option value="Blocked">Blocked</option>
           </select>
         </div>
       </div>
@@ -555,177 +579,158 @@
         <div class="value" id="statTotal">0</div>
       </div>
       <div class="glass stat">
-        <div class="label">Todo</div>
-        <div class="value" id="statTodo">0</div>
+        <div class="label">危険タスク</div>
+        <div class="value" id="statRisk">0</div>
       </div>
       <div class="glass stat">
-        <div class="label">In Progress</div>
-        <div class="value" id="statProgress">0</div>
+        <div class="label">停止 / 詰まり</div>
+        <div class="value" id="statBlocked">0</div>
       </div>
       <div class="glass stat">
-        <div class="label">Done</div>
-        <div class="value" id="statDone">0</div>
+        <div class="label">完了率</div>
+        <div class="value" id="statDoneRate">0%</div>
       </div>
     </div>
 
-    <section class="glass workspace-controls">
-      <div class="workspace-controls-title">WINDOW VISIBILITY</div>
-      <div class="toggle-list" id="windowToggleList"></div>
+    <section class="glass dashboard section">
+      <div class="section-head">
+        <div>
+          <h2 id="dashboardTitle">判断ダッシュボード</h2>
+          <p id="dashboardSub">今どこに介入すべきかを先に見る</p>
+        </div>
+        <div class="badge">JUDGMENT FIRST</div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card danger-top">
+          <h3>危険タスク</h3>
+          <div class="card-sub">期限が近い・高優先度・未完了</div>
+          <div id="riskHero"></div>
+          <div id="riskList" class="mini-list"></div>
+          <div class="kpi-line">
+            <div class="kpi-box">
+              <div class="small">24時間以内</div>
+              <div class="big" id="kpiDueSoon">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">高優先度未完了</div>
+              <div class="big" id="kpiHighOpen">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">要介入</div>
+              <div class="big" id="kpiNeedAction">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card warn-top">
+          <h3>停止タスク</h3>
+          <div class="card-sub">48時間以上更新なし or Blocked</div>
+          <div id="stalledList" class="mini-list"></div>
+        </div>
+
+        <div class="card">
+          <h3>負荷偏り</h3>
+          <div class="card-sub">誰にタスクが集中しているか</div>
+          <div id="loadList" class="mini-list"></div>
+        </div>
+
+        <div class="card ok-top">
+          <h3>詰まり報告</h3>
+          <div class="card-sub">現場から上がっている問題</div>
+          <div id="blockedReportList" class="mini-list"></div>
+        </div>
+      </div>
     </section>
 
-    <div class="workspace" id="workspace">
-      <section class="glass window main" data-window-id="main" draggable="true">
-        <div class="window-header">
+    <section class="main-layout section">
+      <aside id="assignPanel" class="glass panel">
+        <div class="section-head">
           <div>
-            <div class="window-title" id="mainTitle">チームタスク一覧</div>
-            <div class="window-sub" id="mainSub">管理者視点で全体進捗を確認</div>
+            <h2 id="leftPanelTitle">タスク割り振り</h2>
+            <p id="leftPanelSub">管理者からメンバーへ仕事を渡す</p>
           </div>
-          <div class="badge">MAIN</div>
+          <div class="badge" id="leftPanelBadge">ASSIGN</div>
+        </div>
+
+        <div id="managerForm">
+          <div class="form-group">
+            <label for="taskTitle">タスク名</label>
+            <input type="text" id="taskTitle" placeholder="例：ログイン画面の最終調整">
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">内容</label>
+            <textarea id="taskDescription" placeholder="作業内容、注意点、補足など"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskAssignee">担当者</label>
+              <select id="taskAssignee"></select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskDueDate">期限</label>
+              <input type="date" id="taskDueDate">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskPriority">優先度</label>
+              <select id="taskPriority">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskStatus">初期状態</label>
+              <select id="taskStatus">
+                <option value="Todo" selected>Todo</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+                <option value="Blocked">Blocked</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button id="assignTaskBtn" class="btn btn-primary">割り振る</button>
+            <button id="seedTaskBtn" class="btn btn-sub">サンプル</button>
+            <button id="clearAllBtn" class="btn btn-danger">全削除</button>
+          </div>
+        </div>
+
+        <div id="memberGuide" class="hidden">
+          <div class="mini-item">
+            <strong>今やること</strong>
+            <span>自分のタスクを進めて、必要なら詰まり報告を上げる。</span>
+          </div>
+          <div class="mini-item">
+            <strong>詰まりの使いどころ</strong>
+            <span>仕様待ち、確認待ち、素材待ち、判断待ちのときに使う。</span>
+          </div>
+          <div class="mini-item">
+            <strong>狙い</strong>
+            <span>管理者がすぐ介入できるように、止まりを見える化する。</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="glass panel">
+        <div class="section-head">
+          <div>
+            <h2 id="taskListTitle">チームタスク一覧</h2>
+            <p id="taskListSub">管理対象の全タスクを確認</p>
+          </div>
+          <div class="badge">TASK FLOW</div>
         </div>
         <div id="taskList" class="task-list"></div>
       </section>
-
-      <section class="glass window" data-window-id="assign" draggable="true" id="assignWindow">
-        <div class="window-header">
-          <div>
-            <div class="window-title">タスク割り振り</div>
-            <div class="window-sub">上司 → 部下の中核導線</div>
-          </div>
-          <div class="badge">ASSIGN</div>
-        </div>
-
-        <div class="form-group">
-          <label for="taskTitle">タスク名</label>
-          <input type="text" id="taskTitle" placeholder="例：ダッシュボードUI調整">
-        </div>
-
-        <div class="form-group">
-          <label for="taskDescription">内容</label>
-          <textarea id="taskDescription" placeholder="作業内容、注意点、補足など"></textarea>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="taskAssignee">担当者</label>
-            <select id="taskAssignee"></select>
-          </div>
-          <div class="form-group">
-            <label for="taskDueDate">期限</label>
-            <input type="date" id="taskDueDate">
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="taskPriority">優先度</label>
-            <select id="taskPriority">
-              <option value="High">High</option>
-              <option value="Medium" selected>Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="taskStatus">初期状態</label>
-            <select id="taskStatus">
-              <option value="Todo" selected>Todo</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Done">Done</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button id="assignTaskBtn" class="btn btn-primary">割り振る</button>
-          <button id="seedTaskBtn" class="btn btn-sub">サンプル</button>
-          <button id="clearAllBtn" class="btn btn-danger">全削除</button>
-        </div>
-      </section>
-
-      <section class="glass window" data-window-id="deadline" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title">締切接近</div>
-            <div class="window-sub">期限の近いタスク</div>
-          </div>
-          <div class="badge">DEADLINE</div>
-        </div>
-        <div id="deadlineList" class="mini-list"></div>
-      </section>
-
-      <section class="glass window" data-window-id="load" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title">メンバー負荷</div>
-            <div class="window-sub">担当件数の見える化</div>
-          </div>
-          <div class="badge">LOAD</div>
-        </div>
-        <div id="memberLoadList" class="mini-list"></div>
-      </section>
-
-      <section class="glass window" data-window-id="today" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title" id="todayWindowTitle">今日見るもの</div>
-            <div class="window-sub">現在ロールに合わせて切替</div>
-          </div>
-          <div class="badge">TODAY</div>
-        </div>
-        <div id="todayList" class="mini-list"></div>
-      </section>
-
-      <section class="glass window" data-window-id="focus" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title">Focus</div>
-            <div class="window-sub">MindDeskらしさの核</div>
-          </div>
-          <div class="badge">FOCUS</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-box">
-            <div class="small">今一番触るべき件数</div>
-            <div class="big" id="focusCount">0</div>
-          </div>
-          <div class="note-box" id="focusMessage">
-            優先度Highかつ締切が近いタスクがここに反映されます。
-          </div>
-        </div>
-      </section>
-
-      <section class="glass window" data-window-id="summary" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title">進捗サマリー</div>
-            <div class="window-sub">状態ごとの確認</div>
-          </div>
-          <div class="badge">SUMMARY</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-box">
-            <div class="small">完了率</div>
-            <div class="big" id="doneRate">0%</div>
-          </div>
-          <div class="kpi-box">
-            <div class="small">進行中率</div>
-            <div class="big" id="progressRate">0%</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="glass window" data-window-id="note" draggable="true">
-        <div class="window-header">
-          <div>
-            <div class="window-title">System Note</div>
-            <div class="window-sub">UI方針メモ</div>
-          </div>
-          <div class="badge">NOTE</div>
-        </div>
-        <div class="note-box" id="systemNote">
-          固定8窓ではなく、役割ごとに重要な窓を変える構成の方が実務に強いです。
-        </div>
-      </section>
-    </div>
+    </section>
   </div>
 
   <script>
@@ -734,23 +739,7 @@
     let currentMode = "manager";
     let currentUser = members[0];
     let statusFilter = "all";
-    let tasks = JSON.parse(localStorage.getItem("minddesk_tasks_drag")) || [];
-
-    const defaultWindowOrder = ["main", "assign", "deadline", "load", "today", "focus", "summary", "note"];
-    const defaultWindowVisibility = {
-      main: true,
-      assign: true,
-      deadline: true,
-      load: true,
-      today: true,
-      focus: true,
-      summary: true,
-      note: true
-    };
-
-    let windowOrder = JSON.parse(localStorage.getItem("minddesk_window_order")) || defaultWindowOrder;
-    let windowVisibility = JSON.parse(localStorage.getItem("minddesk_window_visibility")) || defaultWindowVisibility;
-    let draggedWindowId = null;
+    let tasks = JSON.parse(localStorage.getItem("minddesk_judgment_tasks")) || [];
 
     const managerModeBtn = document.getElementById("managerModeBtn");
     const memberModeBtn = document.getElementById("memberModeBtn");
@@ -768,67 +757,37 @@
     const seedTaskBtn = document.getElementById("seedTaskBtn");
     const clearAllBtn = document.getElementById("clearAllBtn");
 
-    const workspace = document.getElementById("workspace");
-    const windowToggleList = document.getElementById("windowToggleList");
-
-    const taskList = document.getElementById("taskList");
-    const deadlineList = document.getElementById("deadlineList");
-    const memberLoadList = document.getElementById("memberLoadList");
-    const todayList = document.getElementById("todayList");
-
     const statTotal = document.getElementById("statTotal");
-    const statTodo = document.getElementById("statTodo");
-    const statProgress = document.getElementById("statProgress");
-    const statDone = document.getElementById("statDone");
+    const statRisk = document.getElementById("statRisk");
+    const statBlocked = document.getElementById("statBlocked");
+    const statDoneRate = document.getElementById("statDoneRate");
 
-    const mainTitle = document.getElementById("mainTitle");
-    const mainSub = document.getElementById("mainSub");
-    const assignWindow = document.getElementById("assignWindow");
-    const todayWindowTitle = document.getElementById("todayWindowTitle");
-    const focusCount = document.getElementById("focusCount");
-    const focusMessage = document.getElementById("focusMessage");
-    const doneRate = document.getElementById("doneRate");
-    const progressRate = document.getElementById("progressRate");
-    const systemNote = document.getElementById("systemNote");
+    const dashboardTitle = document.getElementById("dashboardTitle");
+    const dashboardSub = document.getElementById("dashboardSub");
 
-    const windowLabels = {
-      main: "Main",
-      assign: "Assign",
-      deadline: "Deadline",
-      load: "Load",
-      today: "Today",
-      focus: "Focus",
-      summary: "Summary",
-      note: "Note"
-    };
+    const riskHero = document.getElementById("riskHero");
+    const riskList = document.getElementById("riskList");
+    const stalledList = document.getElementById("stalledList");
+    const loadList = document.getElementById("loadList");
+    const blockedReportList = document.getElementById("blockedReportList");
+
+    const kpiDueSoon = document.getElementById("kpiDueSoon");
+    const kpiHighOpen = document.getElementById("kpiHighOpen");
+    const kpiNeedAction = document.getElementById("kpiNeedAction");
+
+    const assignPanel = document.getElementById("assignPanel");
+    const managerForm = document.getElementById("managerForm");
+    const memberGuide = document.getElementById("memberGuide");
+    const leftPanelTitle = document.getElementById("leftPanelTitle");
+    const leftPanelSub = document.getElementById("leftPanelSub");
+    const leftPanelBadge = document.getElementById("leftPanelBadge");
+
+    const taskListTitle = document.getElementById("taskListTitle");
+    const taskListSub = document.getElementById("taskListSub");
+    const taskList = document.getElementById("taskList");
 
     function saveTasks() {
-      localStorage.setItem("minddesk_tasks_drag", JSON.stringify(tasks));
-    }
-
-    function saveWorkspaceState() {
-      localStorage.setItem("minddesk_window_order", JSON.stringify(windowOrder));
-      localStorage.setItem("minddesk_window_visibility", JSON.stringify(windowVisibility));
-    }
-
-    function fillMemberSelects() {
-      currentUserSelect.innerHTML = "";
-      taskAssignee.innerHTML = "";
-
-      members.forEach(member => {
-        const option1 = document.createElement("option");
-        option1.value = member;
-        option1.textContent = member;
-        currentUserSelect.appendChild(option1);
-
-        const option2 = document.createElement("option");
-        option2.value = member;
-        option2.textContent = member;
-        taskAssignee.appendChild(option2);
-      });
-
-      currentUserSelect.value = currentUser;
-      taskAssignee.value = currentUser;
+      localStorage.setItem("minddesk_judgment_tasks", JSON.stringify(tasks));
     }
 
     function escapeHtml(text) {
@@ -840,147 +799,93 @@
         .replace(/'/g, "&#039;");
     }
 
-    function normalizeWorkspaceState() {
-      const idsInDom = [...document.querySelectorAll(".window")].map(w => w.dataset.windowId);
+    function fillMemberSelects() {
+      currentUserSelect.innerHTML = "";
+      taskAssignee.innerHTML = "";
 
-      windowOrder = defaultWindowOrder.filter(id => idsInDom.includes(id));
-      idsInDom.forEach(id => {
-        if (!windowOrder.includes(id)) {
-          windowOrder.push(id);
-        }
+      members.forEach(member => {
+        const o1 = document.createElement("option");
+        o1.value = member;
+        o1.textContent = member;
+        currentUserSelect.appendChild(o1);
+
+        const o2 = document.createElement("option");
+        o2.value = member;
+        o2.textContent = member;
+        taskAssignee.appendChild(o2);
       });
 
-      const mergedVisibility = { ...defaultWindowVisibility };
-      idsInDom.forEach(id => {
-        if (typeof windowVisibility[id] === "boolean") {
-          mergedVisibility[id] = windowVisibility[id];
-        }
-      });
-      windowVisibility = mergedVisibility;
+      currentUserSelect.value = currentUser;
+      taskAssignee.value = currentUser;
     }
 
-    function renderWindowOrder() {
-      windowOrder.forEach(id => {
-        const target = workspace.querySelector(`[data-window-id="${id}"]`);
-        if (target) workspace.appendChild(target);
-      });
+    function getNow() {
+      return new Date();
     }
 
-    function renderWindowVisibility() {
-      document.querySelectorAll(".window").forEach(windowEl => {
-        const id = windowEl.dataset.windowId;
-        windowEl.classList.toggle("hidden", !windowVisibility[id]);
-      });
-
-      if (currentMode === "member") {
-        assignWindow.classList.add("hidden");
-      }
+    function getHoursBetween(dateA, dateB) {
+      return Math.floor((dateA.getTime() - dateB.getTime()) / (1000 * 60 * 60));
     }
 
-    function renderWindowToggles() {
-      windowToggleList.innerHTML = "";
-
-      windowOrder.forEach(id => {
-        const chip = document.createElement("label");
-        chip.className = "toggle-chip";
-
-        const checked = windowVisibility[id] ? "checked" : "";
-        const disabled = id === "main" ? "disabled" : "";
-
-        chip.innerHTML = `
-          <input type="checkbox" data-toggle-id="${id}" ${checked} ${disabled}>
-          <span>${windowLabels[id]}</span>
-        `;
-
-        windowToggleList.appendChild(chip);
-      });
-
-      windowToggleList.querySelectorAll("input[type='checkbox']").forEach(input => {
-        input.addEventListener("change", e => {
-          const id = e.target.dataset.toggleId;
-          if (id === "main") {
-            windowVisibility[id] = true;
-          } else {
-            windowVisibility[id] = e.target.checked;
-          }
-          saveWorkspaceState();
-          renderWindowVisibility();
-        });
-      });
+    function getTaskLastActivityDate(task) {
+      return new Date(task.lastUpdatedAt || task.createdAtISO || new Date().toISOString());
     }
 
-    function attachDragEvents() {
-      document.querySelectorAll(".window").forEach(win => {
-        win.addEventListener("dragstart", () => {
-          draggedWindowId = win.dataset.windowId;
-          win.classList.add("dragging");
-        });
-
-        win.addEventListener("dragend", () => {
-          win.classList.remove("dragging");
-          document.querySelectorAll(".window").forEach(w => w.classList.remove("drag-over"));
-          draggedWindowId = null;
-        });
-
-        win.addEventListener("dragover", e => {
-          e.preventDefault();
-          if (draggedWindowId && draggedWindowId !== win.dataset.windowId) {
-            win.classList.add("drag-over");
-          }
-        });
-
-        win.addEventListener("dragleave", () => {
-          win.classList.remove("drag-over");
-        });
-
-        win.addEventListener("drop", e => {
-          e.preventDefault();
-          win.classList.remove("drag-over");
-
-          const targetId = win.dataset.windowId;
-          if (!draggedWindowId || draggedWindowId === targetId) return;
-
-          const fromIndex = windowOrder.indexOf(draggedWindowId);
-          const toIndex = windowOrder.indexOf(targetId);
-
-          if (fromIndex === -1 || toIndex === -1) return;
-
-          const newOrder = [...windowOrder];
-          const [moved] = newOrder.splice(fromIndex, 1);
-          newOrder.splice(toIndex, 0, moved);
-
-          windowOrder = newOrder;
-          saveWorkspaceState();
-          renderWindowOrder();
-          renderWindowToggles();
-          attachDragEvents();
-          renderWindowVisibility();
-        });
-      });
+    function isDueSoon(task) {
+      if (!task.dueDate || task.status === "Done") return false;
+      const now = getNow();
+      const due = new Date(task.dueDate + "T23:59:59");
+      const diff = due.getTime() - now.getTime();
+      return diff >= 0 && diff <= 1000 * 60 * 60 * 24;
     }
 
-    function getVisibleTasks() {
-      let filtered = [...tasks];
+    function isOverdue(task) {
+      if (!task.dueDate || task.status === "Done") return false;
+      const now = getNow();
+      const due = new Date(task.dueDate + "T23:59:59");
+      return due.getTime() < now.getTime();
+    }
 
-      if (currentMode === "member") {
-        filtered = filtered.filter(task => task.assignee === currentUser);
-      }
+    function isHighOpen(task) {
+      return task.priority === "High" && task.status !== "Done";
+    }
+
+    function isStalled(task) {
+      if (task.status === "Done") return false;
+      if (task.status === "Blocked") return true;
+
+      const last = getTaskLastActivityDate(task);
+      const hours = getHoursBetween(getNow(), last);
+      return hours >= 48;
+    }
+
+    function isRiskTask(task) {
+      if (task.status === "Done") return false;
+      return isOverdue(task) || isDueSoon(task) || isHighOpen(task) || isStalled(task);
+    }
+
+    function getTargetTasks() {
+      return currentMode === "manager"
+        ? tasks
+        : tasks.filter(task => task.assignee === currentUser);
+    }
+
+    function getFilteredTasks() {
+      let list = [...getTargetTasks()];
 
       if (statusFilter !== "all") {
-        filtered = filtered.filter(task => task.status === statusFilter);
+        list = list.filter(task => task.status === statusFilter);
       }
 
-      return filtered.sort((a, b) => {
+      return list.sort((a, b) => {
+        const aRisk = isRiskTask(a) ? 0 : 1;
+        const bRisk = isRiskTask(b) ? 0 : 1;
+        if (aRisk !== bRisk) return aRisk - bRisk;
+
         const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
         const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
         return da - db;
       });
-    }
-
-    function getTargetTasksForStats() {
-      return currentMode === "manager"
-        ? tasks
-        : tasks.filter(task => task.assignee === currentUser);
     }
 
     function getPriorityClass(priority) {
@@ -992,7 +897,12 @@
     function getStatusClass(status) {
       if (status === "Todo") return "todo";
       if (status === "In Progress") return "progress";
+      if (status === "Blocked") return "blocked";
       return "done";
+    }
+
+    function touchTask(task) {
+      task.lastUpdatedAt = new Date().toISOString();
     }
 
     function addTask() {
@@ -1008,6 +918,8 @@
         return;
       }
 
+      const nowISO = new Date().toISOString();
+
       const task = {
         id: crypto.randomUUID(),
         title,
@@ -1016,7 +928,10 @@
         dueDate,
         priority,
         status,
-        createdAt: new Date().toLocaleDateString("ja-JP")
+        createdAt: new Date().toLocaleDateString("ja-JP"),
+        createdAtISO: nowISO,
+        lastUpdatedAt: nowISO,
+        blockedReason: ""
       };
 
       tasks.push(task);
@@ -1043,7 +958,12 @@
     function changeTaskStatus(id, value) {
       const target = tasks.find(task => task.id === id);
       if (!target) return;
+
       target.status = value;
+      if (value !== "Blocked") {
+        target.blockedReason = "";
+      }
+      touchTask(target);
       saveTasks();
       renderAll();
     }
@@ -1051,56 +971,231 @@
     function quickSetStatus(id, value) {
       const target = tasks.find(task => task.id === id);
       if (!target) return;
+
       target.status = value;
+      if (value !== "Blocked") {
+        target.blockedReason = "";
+      }
+      touchTask(target);
       saveTasks();
       renderAll();
     }
 
-    function setMode(mode) {
-      currentMode = mode;
-      managerModeBtn.classList.toggle("active", mode === "manager");
-      memberModeBtn.classList.toggle("active", mode === "member");
+    function setBlocked(id) {
+      const target = tasks.find(task => task.id === id);
+      if (!target) return;
+
+      const reason = prompt("何で詰まってる？ 例：仕様待ち、確認待ち、素材待ち");
+      if (reason === null) return;
+
+      target.status = "Blocked";
+      target.blockedReason = reason.trim();
+      touchTask(target);
+      saveTasks();
+      renderAll();
+    }
+
+    function addProgressNote(id) {
+      const target = tasks.find(task => task.id === id);
+      if (!target) return;
+
+      const note = prompt("進捗メモを入力");
+      if (note === null) return;
+
+      target.description = target.description
+        ? target.description + "\n\n[進捗メモ]\n" + note.trim()
+        : "[進捗メモ]\n" + note.trim();
+
+      touchTask(target);
+      saveTasks();
       renderAll();
     }
 
     function renderStats() {
-      const target = getTargetTasksForStats();
-
+      const target = getTargetTasks();
       const total = target.length;
-      const todo = target.filter(task => task.status === "Todo").length;
-      const progress = target.filter(task => task.status === "In Progress").length;
+      const risk = target.filter(isRiskTask).length;
+      const blocked = target.filter(task => task.status === "Blocked" || task.blockedReason).length;
       const done = target.filter(task => task.status === "Done").length;
+      const doneRate = total ? Math.round((done / total) * 100) : 0;
 
       statTotal.textContent = total;
-      statTodo.textContent = todo;
-      statProgress.textContent = progress;
-      statDone.textContent = done;
+      statRisk.textContent = risk;
+      statBlocked.textContent = blocked;
+      statDoneRate.textContent = doneRate + "%";
+    }
 
-      doneRate.textContent = total ? Math.round((done / total) * 100) + "%" : "0%";
-      progressRate.textContent = total ? Math.round((progress / total) * 100) + "%" : "0%";
+    function renderDashboard() {
+      const target = getTargetTasks();
+
+      dashboardTitle.textContent = currentMode === "manager"
+        ? "判断ダッシュボード"
+        : `${currentUser} の判断ダッシュボード`;
+
+      dashboardSub.textContent = currentMode === "manager"
+        ? "今どこに介入すべきかを先に見る"
+        : "自分が今どこを前に進めるべきかを見る";
+
+      const risks = target.filter(isRiskTask)
+        .sort((a, b) => {
+          const ao = isOverdue(a) ? 0 : 1;
+          const bo = isOverdue(b) ? 0 : 1;
+          if (ao !== bo) return ao - bo;
+
+          const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+          const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+          return da - db;
+        });
+
+      const stalled = target.filter(isStalled);
+      const blockedReports = target.filter(task => task.status === "Blocked" || task.blockedReason);
+
+      kpiDueSoon.textContent = target.filter(isDueSoon).length;
+      kpiHighOpen.textContent = target.filter(isHighOpen).length;
+      kpiNeedAction.textContent = risks.length;
+
+      riskHero.innerHTML = "";
+      riskList.innerHTML = "";
+      stalledList.innerHTML = "";
+      loadList.innerHTML = "";
+      blockedReportList.innerHTML = "";
+
+      if (risks.length > 0) {
+        const top = risks[0];
+        let reason = "要確認";
+        if (isOverdue(top)) reason = "期限超過";
+        else if (isStalled(top)) reason = "更新停止";
+        else if (isDueSoon(top)) reason = "期限接近";
+        else if (isHighOpen(top)) reason = "高優先度未完了";
+
+        riskHero.innerHTML = `
+          <div class="hero-alert">
+            <div class="hero-title">${escapeHtml(top.title)}</div>
+            <div class="hero-sub">
+              ${currentMode === "manager" ? "担当者: " + escapeHtml(top.assignee) + " / " : ""}
+              ${reason} / 期限: ${top.dueDate || "未設定"} / 状態: ${top.status}
+            </div>
+          </div>
+        `;
+      } else {
+        riskHero.innerHTML = `
+          <div class="empty">今は強い危険タスクはありません</div>
+        `;
+      }
+
+      const riskSlice = risks.slice(0, 5);
+      if (riskSlice.length === 0) {
+        riskList.innerHTML = `<div class="empty">一覧なし</div>`;
+      } else {
+        riskSlice.forEach(task => {
+          const item = document.createElement("div");
+          item.className = "mini-item";
+          item.innerHTML = `
+            <strong>${escapeHtml(task.title)}</strong>
+            <span>${currentMode === "manager" ? escapeHtml(task.assignee) + " / " : ""}${task.dueDate || "期限未設定"} / ${task.priority} / ${task.status}</span>
+          `;
+          riskList.appendChild(item);
+        });
+      }
+
+      if (stalled.length === 0) {
+        stalledList.innerHTML = `<div class="empty">停止タスクなし</div>`;
+      } else {
+        stalled.slice(0, 6).forEach(task => {
+          const hours = getHoursBetween(getNow(), getTaskLastActivityDate(task));
+          const item = document.createElement("div");
+          item.className = "mini-item";
+          item.innerHTML = `
+            <strong>${escapeHtml(task.title)}</strong>
+            <span>${currentMode === "manager" ? escapeHtml(task.assignee) + " / " : ""}${task.status} / ${task.status === "Blocked" ? "Blocked状態" : hours + "時間更新なし"}</span>
+          `;
+          stalledList.appendChild(item);
+        });
+      }
+
+      const loadSource = currentMode === "manager"
+        ? members.map(member => ({
+            member,
+            count: tasks.filter(task => task.assignee === member && task.status !== "Done").length,
+            risk: tasks.filter(task => task.assignee === member && isRiskTask(task)).length
+          }))
+        : [{
+            member: currentUser,
+            count: target.filter(task => task.status !== "Done").length,
+            risk: target.filter(isRiskTask).length
+          }];
+
+      loadSource.sort((a, b) => b.count - a.count);
+
+      if (loadSource.length === 0) {
+        loadList.innerHTML = `<div class="empty">表示データなし</div>`;
+      } else {
+        loadSource.forEach(row => {
+          const item = document.createElement("div");
+          item.className = "mini-item";
+          item.innerHTML = `
+            <strong>${escapeHtml(row.member)}</strong>
+            <span>未完了 ${row.count}件 / 要介入 ${row.risk}件</span>
+          `;
+          loadList.appendChild(item);
+        });
+      }
+
+      if (blockedReports.length === 0) {
+        blockedReportList.innerHTML = `<div class="empty">詰まり報告なし</div>`;
+      } else {
+        blockedReports.slice(0, 6).forEach(task => {
+          const item = document.createElement("div");
+          item.className = "mini-item";
+          item.innerHTML = `
+            <strong>${escapeHtml(task.title)}</strong>
+            <span>${currentMode === "manager" ? escapeHtml(task.assignee) + " / " : ""}${escapeHtml(task.blockedReason || "理由未入力")}</span>
+          `;
+          blockedReportList.appendChild(item);
+        });
+      }
+    }
+
+    function renderLeftPanel() {
+      const isManager = currentMode === "manager";
+
+      managerForm.classList.toggle("hidden", !isManager);
+      memberGuide.classList.toggle("hidden", isManager);
+
+      leftPanelTitle.textContent = isManager ? "タスク割り振り" : "メンバーガイド";
+      leftPanelSub.textContent = isManager
+        ? "管理者からメンバーへ仕事を渡す"
+        : "自分のタスクを進めて必要なら報告";
+      leftPanelBadge.textContent = isManager ? "ASSIGN" : "MEMBER";
     }
 
     function renderTaskList() {
-      const visible = getVisibleTasks();
+      const list = getFilteredTasks();
 
-      mainTitle.textContent = currentMode === "manager"
+      taskListTitle.textContent = currentMode === "manager"
         ? "チームタスク一覧"
-        : `${currentUser} のタスク`;
+        : `${currentUser} のタスク一覧`;
 
-      mainSub.textContent = currentMode === "manager"
-        ? "管理者視点で全体進捗を確認"
-        : "自分に割り振られたタスクを処理";
+      taskListSub.textContent = currentMode === "manager"
+        ? "管理対象の全タスクを確認"
+        : "自分に割り振られた仕事を処理";
 
       taskList.innerHTML = "";
 
-      if (visible.length === 0) {
+      if (list.length === 0) {
         taskList.innerHTML = `<div class="empty">表示できるタスクがまだありません</div>`;
         return;
       }
 
-      visible.forEach(task => {
+      list.forEach(task => {
         const card = document.createElement("div");
         card.className = "task-card";
+
+        const riskText = [];
+        if (isOverdue(task)) riskText.push("期限超過");
+        if (isDueSoon(task)) riskText.push("期限接近");
+        if (isStalled(task)) riskText.push("停止中");
+        if (isHighOpen(task)) riskText.push("高優先度");
 
         const actionBlock = currentMode === "manager"
           ? `
@@ -1108,8 +1203,10 @@
               <select onchange="changeTaskStatus('${task.id}', this.value)">
                 <option value="Todo" ${task.status === "Todo" ? "selected" : ""}>Todo</option>
                 <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                <option value="Blocked" ${task.status === "Blocked" ? "selected" : ""}>Blocked</option>
                 <option value="Done" ${task.status === "Done" ? "selected" : ""}>Done</option>
               </select>
+              <button class="btn btn-sub" onclick="addProgressNote('${task.id}')">進捗メモ</button>
               <button class="btn btn-danger" onclick="deleteTask('${task.id}')">削除</button>
             </div>
           `
@@ -1117,12 +1214,17 @@
             <div class="task-actions">
               <button class="btn btn-sub" onclick="quickSetStatus('${task.id}','Todo')">Todo</button>
               <button class="btn btn-sub" onclick="quickSetStatus('${task.id}','In Progress')">進行中</button>
+              <button class="btn btn-warn" onclick="setBlocked('${task.id}')">詰まり報告</button>
               <button class="btn btn-primary" onclick="quickSetStatus('${task.id}','Done')">完了</button>
             </div>
           `;
 
         card.innerHTML = `
-          <div class="task-title">${escapeHtml(task.title)}</div>
+          <div class="task-head">
+            <div class="task-title">${escapeHtml(task.title)}</div>
+            ${riskText.length ? `<div class="badge">${riskText.join(" / ")}</div>` : ""}
+          </div>
+
           <div class="task-desc">${escapeHtml(task.description || "説明なし")}</div>
 
           <div class="chips">
@@ -1143,220 +1245,102 @@
               <div class="meta-label">作成日</div>
               <div class="meta-value">${task.createdAt}</div>
             </div>
+            <div class="meta">
+              <div class="meta-label">最終更新</div>
+              <div class="meta-value">${new Date(task.lastUpdatedAt || task.createdAtISO).toLocaleString("ja-JP")}</div>
+            </div>
           </div>
 
           ${actionBlock}
+
+          ${task.blockedReason ? `
+            <div class="block-box">
+              <div class="block-title">詰まり理由</div>
+              <div class="block-text">${escapeHtml(task.blockedReason)}</div>
+            </div>
+          ` : ""}
         `;
 
         taskList.appendChild(card);
       });
     }
 
-    function renderDeadlineList() {
-      const base = currentMode === "manager"
-        ? [...tasks]
-        : tasks.filter(task => task.assignee === currentUser);
-
-      const near = base
-        .filter(task => task.dueDate && task.status !== "Done")
-        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-        .slice(0, 5);
-
-      deadlineList.innerHTML = "";
-
-      if (near.length === 0) {
-        deadlineList.innerHTML = `<div class="empty">期限の近い未完了タスクなし</div>`;
-        return;
-      }
-
-      near.forEach(task => {
-        const item = document.createElement("div");
-        item.className = "mini-item";
-        item.innerHTML = `
-          <strong>${escapeHtml(task.title)}</strong>
-          <span>${escapeHtml(task.assignee)} / ${task.dueDate} / ${task.priority}</span>
-        `;
-        deadlineList.appendChild(item);
-      });
-    }
-
-    function renderMemberLoad() {
-      memberLoadList.innerHTML = "";
-
-      if (currentMode === "member") {
-        const myTasks = tasks.filter(task => task.assignee === currentUser);
-        const todo = myTasks.filter(task => task.status === "Todo").length;
-        const progress = myTasks.filter(task => task.status === "In Progress").length;
-
-        memberLoadList.innerHTML = `
-          <div class="mini-item">
-            <strong>${currentUser}</strong>
-            <span>Todo: ${todo} / In Progress: ${progress} / All: ${myTasks.length}</span>
-          </div>
-        `;
-        return;
-      }
-
-      members.forEach(member => {
-        const memberTasks = tasks.filter(task => task.assignee === member);
-        const todo = memberTasks.filter(task => task.status === "Todo").length;
-        const progress = memberTasks.filter(task => task.status === "In Progress").length;
-        const done = memberTasks.filter(task => task.status === "Done").length;
-
-        const item = document.createElement("div");
-        item.className = "mini-item";
-        item.innerHTML = `
-          <strong>${member}</strong>
-          <span>All: ${memberTasks.length} / Todo: ${todo} / Progress: ${progress} / Done: ${done}</span>
-        `;
-        memberLoadList.appendChild(item);
-      });
-    }
-
-    function renderTodayList() {
-      const target = currentMode === "manager"
-        ? tasks
-            .filter(task => task.status !== "Done")
-            .sort((a, b) => {
-              const pa = taskPriorityRank(a.priority);
-              const pb = taskPriorityRank(b.priority);
-              return pa - pb;
-            })
-            .slice(0, 5)
-        : tasks
-            .filter(task => task.assignee === currentUser && task.status !== "Done")
-            .sort((a, b) => {
-              const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-              const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-              return da - db;
-            })
-            .slice(0, 5);
-
-      todayWindowTitle.textContent = currentMode === "manager"
-        ? "今日見るべきタスク"
-        : "今日やること";
-
-      todayList.innerHTML = "";
-
-      if (target.length === 0) {
-        todayList.innerHTML = `<div class="empty">表示項目なし</div>`;
-        return;
-      }
-
-      target.forEach(task => {
-        const item = document.createElement("div");
-        item.className = "mini-item";
-        item.innerHTML = `
-          <strong>${escapeHtml(task.title)}</strong>
-          <span>${currentMode === "manager" ? escapeHtml(task.assignee) + " / " : ""}${task.dueDate || "期限未設定"} / ${task.status}</span>
-        `;
-        todayList.appendChild(item);
-      });
-    }
-
-    function taskPriorityRank(priority) {
-      if (priority === "High") return 0;
-      if (priority === "Medium") return 1;
-      return 2;
-    }
-
-    function renderFocus() {
-      const target = currentMode === "manager"
-        ? tasks
-        : tasks.filter(task => task.assignee === currentUser);
-
-      const focusTasks = target
-        .filter(task => task.priority === "High" && task.status !== "Done")
-        .sort((a, b) => {
-          const da = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-          const db = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-          return da - db;
-        });
-
-      focusCount.textContent = focusTasks.length;
-
-      if (focusTasks.length === 0) {
-        focusMessage.textContent = "今はHigh優先の未完了タスクはありません。";
-      } else {
-        const first = focusTasks[0];
-        focusMessage.textContent = currentMode === "manager"
-          ? `今一番先に確認するなら「${first.title}」。担当者は ${first.assignee}。`
-          : `今一番先に触るなら「${first.title}」。まずこれを前進させるのが優先。`;
-      }
-    }
-
-    function renderSystemNote() {
-      systemNote.textContent = currentMode === "manager"
-        ? "管理者画面では全体把握が最優先。窓を絞るなら Main / Assign / Deadline / Load を残すのが強い。"
-        : "メンバー画面では自分が今やることが最優先。Main / Today / Focus / Summary を残すのが強い。";
-    }
-
     function renderAll() {
       renderStats();
+      renderDashboard();
+      renderLeftPanel();
       renderTaskList();
-      renderDeadlineList();
-      renderMemberLoad();
-      renderTodayList();
-      renderFocus();
-      renderSystemNote();
-      renderWindowOrder();
-      renderWindowVisibility();
-      renderWindowToggles();
-      attachDragEvents();
     }
 
     function seedSampleTasks() {
-      const today = new Date();
-      const formatDate = (days) => {
-        const d = new Date(today);
-        d.setDate(d.getDate() + days);
-        return d.toISOString().slice(0, 10);
+      const now = new Date();
+      const addDays = (d) => {
+        const x = new Date(now);
+        x.setDate(x.getDate() + d);
+        return x.toISOString().slice(0, 10);
+      };
+      const addHoursISO = (h) => {
+        const x = new Date(now);
+        x.setHours(x.getHours() - h);
+        return x.toISOString();
       };
 
-      const sample = [
+      const seed = [
         {
           id: crypto.randomUUID(),
-          title: "ログイン画面UIの調整",
-          description: "入力欄・ボタン・余白を整えて統一感を出す",
+          title: "ログイン画面の最終調整",
+          description: "入力欄とボタンの見た目を整えて、スマホ幅でも崩れないようにする",
           assignee: "田中",
-          dueDate: formatDate(1),
+          dueDate: addDays(0),
           priority: "High",
           status: "Todo",
-          createdAt: new Date().toLocaleDateString("ja-JP")
+          createdAt: new Date().toLocaleDateString("ja-JP"),
+          createdAtISO: addHoursISO(10),
+          lastUpdatedAt: addHoursISO(10),
+          blockedReason: ""
         },
         {
           id: crypto.randomUUID(),
-          title: "メインダッシュボードのカード整理",
-          description: "情報量を保ったまま見やすくする",
+          title: "ダッシュボードカードの整理",
+          description: "判断しやすい順に情報を並び替える",
           assignee: "佐藤",
-          dueDate: formatDate(2),
-          priority: "Medium",
+          dueDate: addDays(1),
+          priority: "High",
           status: "In Progress",
-          createdAt: new Date().toLocaleDateString("ja-JP")
+          createdAt: new Date().toLocaleDateString("ja-JP"),
+          createdAtISO: addHoursISO(55),
+          lastUpdatedAt: addHoursISO(55),
+          blockedReason: ""
         },
         {
           id: crypto.randomUUID(),
-          title: "ローカル保存処理の検証",
-          description: "追加・更新・削除後も再読み込みで保持されるか確認",
+          title: "API仕様の確認待ち",
+          description: "バック側のレスポンス形式待ち",
           assignee: "山本",
-          dueDate: formatDate(3),
+          dueDate: addDays(2),
+          priority: "Medium",
+          status: "Blocked",
+          createdAt: new Date().toLocaleDateString("ja-JP"),
+          createdAtISO: addHoursISO(20),
+          lastUpdatedAt: addHoursISO(20),
+          blockedReason: "バックエンドの仕様確定待ち"
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "通知窓の仮レイアウト作成",
+          description: "危険タスクと詰まり報告を見やすく出す",
+          assignee: "中村",
+          dueDate: addDays(4),
           priority: "Low",
           status: "Done",
-          createdAt: new Date().toLocaleDateString("ja-JP")
-        },
-        {
-          id: crypto.randomUUID(),
-          title: "通知窓の仮UI作成",
-          description: "締切接近や進捗更新を表示する箱を作る",
-          assignee: "中村",
-          dueDate: formatDate(1),
-          priority: "High",
-          status: "Todo",
-          createdAt: new Date().toLocaleDateString("ja-JP")
+          createdAt: new Date().toLocaleDateString("ja-JP"),
+          createdAtISO: addHoursISO(5),
+          lastUpdatedAt: addHoursISO(1),
+          blockedReason: ""
         }
       ];
 
-      tasks = [...tasks, ...sample];
+      tasks = [...tasks, ...seed];
       saveTasks();
       renderAll();
     }
@@ -1371,8 +1355,19 @@
       renderAll();
     });
 
-    managerModeBtn.addEventListener("click", () => setMode("manager"));
-    memberModeBtn.addEventListener("click", () => setMode("member"));
+    managerModeBtn.addEventListener("click", () => {
+      currentMode = "manager";
+      managerModeBtn.classList.add("active");
+      memberModeBtn.classList.remove("active");
+      renderAll();
+    });
+
+    memberModeBtn.addEventListener("click", () => {
+      currentMode = "member";
+      memberModeBtn.classList.add("active");
+      managerModeBtn.classList.remove("active");
+      renderAll();
+    });
 
     currentUserSelect.addEventListener("change", (e) => {
       currentUser = e.target.value;
@@ -1385,12 +1380,13 @@
     });
 
     fillMemberSelects();
-    normalizeWorkspaceState();
     renderAll();
 
     window.deleteTask = deleteTask;
     window.changeTaskStatus = changeTaskStatus;
     window.quickSetStatus = quickSetStatus;
+    window.setBlocked = setBlocked;
+    window.addProgressNote = addProgressNote;
   </script>
 </body>
 </html>
