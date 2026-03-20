@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindDesk</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1>MindDesk</h1>
+        <p>Powered by Parallel Mind OS / Linked Judgment Dashboard + Report Center</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="glass role-switch">
+          <button id="managerModeBtn" class="active">管理者</button>
+          <button id="memberModeBtn">メンバー</button>
+        </div>
+
+        <div class="glass select-box">
+          <label for="currentUserSelect">表示ユーザー</label>
+          <select id="currentUserSelect"></select>
+        </div>
+
+        <div class="glass select-box">
+          <label for="statusFilter">状態</label>
+          <select id="statusFilter">
+            <option value="all">すべて</option>
+            <option value="Todo">未着手</option>
+            <option value="In Progress">進行中</option>
+            <option value="Done">完了</option>
+            <option value="Blocked">詰まり</option>
+          </select>
+        </div>
+
+        <div class="glass select-box search-box">
+         <label for="taskSearch">検索</label>
+         <input type="text" id="taskSearch" placeholder="タスク名 / 説明 / 担当者">
+        </div>
+
+        <div class="glass select-box">
+         <label for="priorityFilter">優先度</label>
+         <select id="priorityFilter">
+          <option value="all">すべて</option>
+          <option value="High">高</option>
+          <option value="Medium">中</option>
+          <option value="Low">低</option>
+         </select>
+        </div>
+
+        <div class="glass select-box">
+         <label for="sortOrder">並び順</label>
+         <select id="sortOrder">
+          <option value="risk">危険度順</option>
+          <option value="dueSoon">期限が近い順</option>
+          <option value="newest">新しい順</option>
+          <option value="oldestUpdate">更新が古い順</option>
+         </select>
+        </div>
+
+        <div class="glass select-box check-box">
+         <label>
+          <input type="checkbox" id="overdueOnly">
+          期限超過のみ
+         </label>
+        </div>
+
+        <div class="glass select-box check-box">
+         <label>
+          <input type="checkbox" id="pendingOnly">
+          未確認報告あり
+         </label>
+        </div>
+
+        <div class="glass select-box">
+         <button id="resetFiltersBtn" class="btn btn-sub">絞り込みリセット</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="glass stat">
+        <div class="label">総タスク数</div>
+        <div class="value" id="statTotal">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">危険タスク</div>
+        <div class="value" id="statRisk">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">停止 / 詰まり</div>
+        <div class="value" id="statBlocked">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">未確認報告</div>
+        <div class="value" id="statPendingReports">0</div>
+      </div>
+    </div>
+
+    <section class="glass dashboard section">
+      <div class="section-head">
+        <div>
+          <h2 id="dashboardTitle">判断ダッシュボード</h2>
+          <p id="dashboardSub">危険タスクと未確認報告をつないで優先判断する</p>
+        </div>
+        <div class="badge">JUDGMENT FIRST</div>
+      </div>
+
+      <div class="priority-focus glass" id="priorityFocusBox">
+       <div class="priority-focus-head">
+        <div>
+         <h3>今やるべき３つ</h3>
+         <p>危険度と期限と未確認報告から優先表示</p>
+        </div>
+        <div class="badge">TOP 3 NOW</div>
+       </div>
+       <div id="topPriorityList" class="priority-focus-list"></div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card danger-top">
+          <h3>危険タスク</h3>
+          <div class="card-sub">期限・停止・未確認報告をまとめて判断</div>
+          <div id="riskHero"></div>
+          <div id="riskList" class="mini-list"></div>
+          <div class="kpi-line">
+            <div class="kpi-box">
+              <div class="small">24時間以内</div>
+              <div class="big" id="kpiDueSoon">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">高優先度未完了</div>
+              <div class="big" id="kpiHighOpen">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">未確認報告付き</div>
+              <div class="big" id="kpiPendingLinked">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card warn-top">
+          <h3>停止タスク</h3>
+          <div class="card-sub">48時間以上更新なし or Blocked</div>
+          <div id="stalledList" class="mini-list"></div>
+        </div>
+
+        <div class="card" id="loadCard">
+         <h3 id="loadCardTitle">負荷 + 未確認報告</h3>
+         <div class="card-sub" id="loadCardSub">担当件数と報告の偏りを見る</div>
+         <div id="loadList" class="mini-list"></div>
+        </div>
+
+        <div class="card ok-top">
+          <h3>新着報告</h3>
+          <div class="card-sub">まだ見ていない報告を優先表示</div>
+          <div id="latestReportList" class="mini-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-grid section">
+      <aside class="glass panel">
+        <div class="section-head">
+          <div>
+            <h2 id="leftPanelTitle">タスク割り振り</h2>
+            <p id="leftPanelSub">管理者からメンバーへ仕事を渡す</p>
+          </div>
+          <div class="badge" id="leftPanelBadge">ASSIGN</div>
+        </div>
+
+        <div id="managerForm">
+          <div class="form-group">
+            <label for="taskTitle">タスク名</label>
+            <input type="text" id="taskTitle" placeholder="例：ログイン画面の最終調整">
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">内容</label>
+            <textarea id="taskDescription" placeholder="作業内容、注意点、補足など"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskAssignee">担当者</label>
+              <select id="taskAssignee"></select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskDueDate">期限</label>
+              <input type="date" id="taskDueDate">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskPriority">優先度</label>
+              <select id="taskPriority">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskStatus">初期状態</label>
+              <select id="taskStatus">
+                <option value="Todo" selected>Todo</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+                <option value="Blocked">Blocked</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button id="assignTaskBtn" class="btn btn-primary">割り振る</button>
+            <button id="seedTaskBtn" class="btn btn-sub">サンプル</button>
+            <button class="btn btn-sub" onclick="resetSeedFlag()">seed制限解除</button>
+            <button id="clearAllBtn" class="btn btn-danger">全削除</button>
+          </div>
+        </div>
+
+        <div id="memberGuide" class="hidden">
+          <div class="guide-box">
+            詰まり・進捗・完了を報告すると、管理者側の危険判定に直接反映される。
+            <br><br>
+            つまり報告はただの連絡じゃなく、
+            「今ここに判断が必要です」を前に出す役割になる。
+          </div>
+        </div>
+      </aside>
+
+      <section class="glass panel">
+        <div class="section-head">
+          <div>
+            <h2 id="taskListTitle">チームタスク一覧</h2>
+            <p id="taskListSub">危険理由と未確認報告を含めて確認</p>
+          </div>
+          <div class="badge">TASK FLOW</div>
+        </div>
+        <div id="taskList" class="task-list"></div>
+      </section>
+
+      <aside class="glass report-center">
+        <div class="section-head">
+          <div>
+            <h2 id="reportCenterTitle">報告センター</h2>
+            <p id="reportCenterSub">報告対応が危険度に影響する</p>
+          </div>
+          <div class="badge">REPORT CENTER</div>
+        </div>
+        <div id="reportList" class="report-list"></div>
+      </aside>
+    </section>
+  </div>
+
+  <script src="script/state.js"></script>
+  <script src="script/utils.js"></script>
+  <script src="script/tasks.js"></script>
+  <script src="script/reports.js"></script>
+  <script src="script/dashboard.js"></script>
+  <script src="script/ui.js"></script>
+  <script src="script/seed.js"></script>
+  <script src="script/main.js"></script>
+</body>
+</html>
