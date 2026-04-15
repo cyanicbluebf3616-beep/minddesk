@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- =========================
+    基本設定
+    - 文字コード
+    - レスポンシブ設定
+    - タイトル
+    - CSS読み込み
+  ========================== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindDesk</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="app-loading">
+  <!-- =========================
+    アプリ全体ラッパー
+  ========================== -->
+  <div class="app">
+
+    <!-- =========================
+      上部ヘッダーエリア
+      - ブランド名
+      - モード切替
+      - 絞り込み
+      - ログイン関係
+    ========================== -->
+    <div class="topbar">
+
+      <!-- ブランド表示 -->
+      <div class="brand">
+        <h1>MindDesk</h1>
+        <p>Powered by Parallel Mind OS / Linked Judgment Dashboard + Report Center</p>
+      </div>
+
+      <!-- ツールバー全体 -->
+      <div class="toolbar">
+
+        <!-- 管理者 / メンバー 切替 -->
+        <div class="glass role-switch">
+          <button id="managerModeBtn" class="active">管理者</button>
+          <button id="memberModeBtn">メンバー</button>
+        </div>
+
+        <!-- 表示ユーザー切替 -->
+        <div class="glass select-box">
+          <label for="currentUserSelect">表示ユーザー</label>
+          <select id="currentUserSelect"></select>
+        </div>
+
+        <!-- 状態フィルター -->
+        <div class="glass select-box">
+          <label for="statusFilter">状態</label>
+          <select id="statusFilter">
+            <option value="all">すべて</option>
+            <option value="Todo">Queued</option>
+            <option value="In Progress">Active</option>
+            <option value="Done">Completed</option>
+            <option value="Blocked">Stalled</option>
+          </select>
+        </div>
+
+        <!-- 検索欄 -->
+        <div class="glass select-box search-box">
+          <label for="taskSearch">検索</label>
+          <input type="text" id="taskSearch" placeholder="タスク名 / 説明 / 担当者">
+        </div>
+
+        <!-- 優先度フィルター -->
+        <div class="glass select-box">
+          <label for="priorityFilter">優先度</label>
+          <select id="priorityFilter">
+            <option value="all">すべて</option>
+            <option value="High">高</option>
+            <option value="Medium">中</option>
+            <option value="Low">低</option>
+          </select>
+        </div>
+
+        <!-- 並び順 -->
+        <div class="glass select-box">
+          <label for="sortOrder">並び順</label>
+          <select id="sortOrder">
+            <option value="risk">危険度順</option>
+            <option value="dueSoon">期限が近い順</option>
+            <option value="newest">新しい順</option>
+            <option value="oldestUpdate">更新が古い順</option>
+          </select>
+        </div>
+
+        <!-- 期限超過のみ表示 -->
+        <div class="glass select-box check-box">
+          <label>
+            <input type="checkbox" id="overdueOnly">
+            期限超過のみ
+          </label>
+        </div>
+
+        <!-- 未確認報告ありのみ表示 -->
+        <div class="glass select-box check-box">
+          <label>
+            <input type="checkbox" id="pendingOnly">
+            未確認報告あり
+          </label>
+        </div>
+
+        <!-- フィルターリセット -->
+        <div class="glass select-box">
+          <button id="resetFiltersBtn" class="btn btn-sub">絞り込みリセット</button>
+        </div>
+
+        <!-- =========================
+          認証エリア
+          - Supabaseの登録 / ログイン / ログアウト用
+        ========================== -->
+        <div class="glass select-box">
+          <input id="email" placeholder="email" style="width:140px;">
+          <input id="password" type="password" placeholder="pass" style="width:120px;">
+          <button onclick="signUp()">登録</button>
+          <button onclick="login()">ログイン</button>
+          <button onclick="logout()">ログアウト</button>
+        </div>
+
+        <!-- ログイン状態表示 -->
+        <div id="authStatus">未ログイン</div>
+      </div>
+    </div>
+
+    <!-- =========================
+      上部ステータスカード
+      - 総タスク数
+      - 危険タスク
+      - 停止 / 詰まり
+      - 未確認報告
+    ========================== -->
+    <div class="stats">
+      <div class="glass stat">
+        <div class="label">総タスク数</div>
+        <div class="value" id="statTotal">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">危険タスク</div>
+        <div class="value" id="statRisk">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">停止 / 詰まり</div>
+        <div class="value" id="statBlocked">0</div>
+      </div>
+      <div class="glass stat">
+        <div class="label">未確認報告</div>
+        <div class="value" id="statPendingReports">0</div>
+      </div>
+    </div>
+
+    <!-- =========================
+      判断ダッシュボード
+      - 今やるべき3つ
+      - 危険タスク
+      - 停止タスク
+      - 負荷 + 未確認報告
+      - 新着報告
+    ========================== -->
+    <section class="glass dashboard section">
+      <div class="section-head">
+        <div>
+          <h2 id="dashboardTitle">判断ダッシュボード</h2>
+          <p id="dashboardSub">危険タスクと未確認報告をつないで優先判断する</p>
+        </div>
+        <div class="badge">JUDGMENT FIRST</div>
+      </div>
+
+      <!-- 今やるべき3つ -->
+      <div class="priority-focus glass" id="priorityFocusBox">
+        <div class="priority-focus-head">
+          <div>
+            <h3>今やるべき3つ</h3>
+            <p>危険度と期限と未確認報告から優先表示</p>
+          </div>
+          <div class="badge">TOP 3 NOW</div>
+        </div>
+        <div id="topPriorityList" class="priority-focus-list"></div>
+      </div>
+
+      <!-- ダッシュボード4分割 -->
+      <div class="dashboard-grid">
+
+        <!-- 危険タスク -->
+        <div class="card danger-top">
+          <h3>危険タスク</h3>
+          <div class="card-sub">期限・停止・未確認報告をまとめて判断</div>
+          <div id="riskHero"></div>
+          <div id="riskList" class="mini-list"></div>
+
+          <!-- KPI -->
+          <div class="kpi-line">
+            <div class="kpi-box">
+              <div class="small">24時間以内</div>
+              <div class="big" id="kpiDueSoon">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">高優先度未完了</div>
+              <div class="big" id="kpiHighOpen">0</div>
+            </div>
+            <div class="kpi-box">
+              <div class="small">未確認報告付き</div>
+              <div class="big" id="kpiPendingLinked">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 停止タスク -->
+        <div class="card warn-top">
+          <h3>停止タスク</h3>
+          <div class="card-sub">48時間以上更新なし or Blocked</div>
+          <div id="stalledList" class="mini-list"></div>
+        </div>
+
+        <!-- 負荷 + 未確認報告 -->
+        <div class="card" id="loadCard">
+          <h3 id="loadCardTitle">負荷 + 未確認報告</h3>
+          <div class="card-sub" id="loadCardSub">担当件数と報告の偏りを見る</div>
+          <div id="loadList" class="mini-list"></div>
+        </div>
+
+        <!-- 新着報告 -->
+        <div class="card ok-top">
+          <h3>新着報告</h3>
+          <div class="card-sub">まだ見ていない報告を優先表示</div>
+          <div id="latestReportList" class="mini-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+      メイン3カラム
+      左：割り振り/ガイド
+      中：タスク一覧
+      右：報告センター
+    ========================== -->
+    <section class="content-grid section">
+
+      <!-- =========================
+        左カラム
+        管理者モードではタスク割り振りフォーム
+        メンバーモードではガイド表示
+      ========================== -->
+      <aside class="glass panel">
+        <div class="section-head">
+          <div>
+            <h2 id="leftPanelTitle">タスク割り振り</h2>
+            <p id="leftPanelSub">管理者からメンバーへ仕事を渡す</p>
+          </div>
+          <div class="badge" id="leftPanelBadge">ASSIGN</div>
+        </div>
+
+        <!-- 管理者用フォーム -->
+        <div id="managerForm">
+
+          <!-- タスク名 -->
+          <div class="form-group">
+            <label for="taskTitle">タスク名</label>
+            <input type="text" id="taskTitle" placeholder="例：ログイン画面の最終調整">
+          </div>
+
+          <!-- タスク内容 -->
+          <div class="form-group">
+            <label for="taskDescription">内容</label>
+            <textarea id="taskDescription" placeholder="作業内容、注意点、補足など"></textarea>
+          </div>
+
+          <!-- 担当者 / 予備期限 -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskAssignee">担当者</label>
+              <select id="taskAssignee"></select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskBufferDueDate">予備期限</label>
+              <input type="date" id="taskBufferDueDate">
+            </div>
+          </div>
+
+          <!-- 最終期限 / 優先度 -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskFinalDueDate">最終期限</label>
+              <input type="date" id="taskFinalDueDate">
+            </div>
+
+            <div class="form-group">
+              <label for="taskPriority">優先度</label>
+              <select id="taskPriority">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 初期状態 -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="taskStatus">初期状態</label>
+              <select id="taskStatus">
+                <option value="Todo" selected>Queued</option>
+                <option value="In Progress">Active</option>
+                <option value="Done">Completed</option>
+                <option value="Blocked">Stalled</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ボタン群 -->
+          <div class="btn-row">
+            <button id="assignTaskBtn" class="btn btn-primary">割り振る</button>
+            <button id="seedTaskBtn" class="btn btn-sub">サンプル</button>
+            <button class="btn btn-sub" onclick="resetSeedFlag()">seed制限解除</button>
+            <button id="clearAllBtn" class="btn btn-danger">全削除</button>
+          </div>
+        </div>
+
+        <!-- メンバー用ガイド -->
+        <div id="memberGuide" class="hidden">
+          <div class="guide-box">
+            詰まり・進捗・完了を報告すると、管理者側の危険判定に直接反映される。
+            <br><br>
+            つまり報告はただの連絡じゃなく、
+            「今ここに判断が必要です」を前に出す役割になる。
+          </div>
+        </div>
+      </aside>
+
+      <!-- =========================
+        中央：チームタスク一覧
+      ========================== -->
+      <section class="glass panel">
+        <div class="section-head">
+          <div>
+            <h2 id="taskListTitle">チームタスク一覧</h2>
+            <p id="taskListSub">危険理由と未確認報告を含めて確認</p>
+          </div>
+          <div class="badge">TASK FLOW</div>
+        </div>
+        <div id="taskList" class="task-list"></div>
+      </section>
+
+      <!-- =========================
+        右カラム：報告センター
+      ========================== -->
+      <aside class="glass report-center">
+        <div class="section-head">
+          <div>
+            <h2 id="reportCenterTitle">報告センター</h2>
+            <p id="reportCenterSub">報告対応が危険度に影響する</p>
+          </div>
+          <div class="badge">REPORT CENTER</div>
+        </div>
+        <div id="reportList" class="report-list"></div>
+      </aside>
+    </section>
+  </div>
+
+  <!-- =========================
+    Supabase本体ライブラリ
+    auth.js などで使用
+  ========================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- =========================
+    JS読み込み順
+    この順番はかなり大事
+    1. state      : 共通状態
+    2. utils      : 共通関数
+    3. tasks      : タスク処理
+    4. reports    : 報告処理
+    5. dashboard  : ダッシュボード描画
+    6. ui         : UI描画/画面更新
+    7. seed       : サンプル投入
+    8. auth       : 認証処理
+    9. main       : 起動処理
+  ========================== -->
+  <script src="script/state.js"></script>
+  <script src="script/utils.js"></script>
+  <script src="script/tasks.js"></script>
+  <script src="script/reports.js"></script>
+  <script src="script/dashboard.js"></script>
+  <script src="script/ui.js"></script>
+  <script src="script/seed.js"></script>
+  <script src="script/auth.js"></script>
+  <script src="script/main.js"></script>
+</body>
+</html>
